@@ -7,7 +7,10 @@ export class World {
         this.timer.connect(document);
 
         this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this.scene.background = new THREE.Color().setHSL(0.6, 0, 1);
+        this.scene.fog = new THREE.Fog(this.scene.background, 1, 5000);
+
+        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 5000);
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -25,10 +28,10 @@ export class World {
 
         document.body.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 10, 5);
+        this.camera.position.set(10, 5, 5);
         this.camera.lookAt(0, 0, 0);
 
-        window.addEventListener('resize', this.onWindowResize.bind(this) );
+        window.addEventListener('resize', this.onWindowResize.bind(this));
 
         if (debug) {
             this.scene.add(new THREE.AxesHelper(5));
@@ -56,8 +59,8 @@ export class World {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    addMesh(mesh) {
-        this.scene.add(mesh);
+    add(other) {
+        this.scene.add(other);
     }
 }
 
