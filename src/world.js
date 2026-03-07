@@ -26,6 +26,7 @@ export class World {
         document.body.appendChild(this.renderer.domElement);
 
         this.camera.position.set(0, 10, 5);
+        this.camera.lookAt(0, 0, 0);
 
         window.addEventListener('resize', this.onWindowResize.bind(this) );
 
