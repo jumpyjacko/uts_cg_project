@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { World } from './setup.js';
+import { World } from './world.js';
 
 let world = new World();
 
