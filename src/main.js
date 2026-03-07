@@ -6,18 +6,18 @@ let world = new World(true); // true is enabling some debug renderers
 // setup lighting and sky
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 2);
 hemiLight.color.setHex(0x5078FE);
-hemiLight.groundColor.setHex(0xffffff);
+hemiLight.groundColor.setHex(0xf7f9ff);
 hemiLight.position.set(0, 50, 0);
 world.add(hemiLight);
 
-const hemiLightHelper = new THREE.HemisphereLightHelper( hemiLight, 10 );
+const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10); // debug
 world.add(hemiLightHelper);
 
-const dirLight = new THREE.DirectionalLight( 0xffffff, 3 );
-dirLight.color.setHSL( 0.1, 1, 0.95 );
-dirLight.position.set( - 1, 1.75, 1 );
-dirLight.position.multiplyScalar( 30 );
-world.add( dirLight );
+const dirLight = new THREE.DirectionalLight(0xffffff, 3);
+dirLight.color.setHSL(0.1, 1, 0.95);
+dirLight.position.set(-1, 1.75, 1);
+dirLight.position.multiplyScalar(30);
+world.add(dirLight);
 
 dirLight.castShadow = true;
 
@@ -34,15 +34,15 @@ dirLight.shadow.camera.bottom = - d;
 dirLight.shadow.camera.far = 3500;
 dirLight.shadow.bias = - 0.0001;
 
-const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10 );
-world.add( dirLightHelper );
+const dirLightHelper = new THREE.DirectionalLightHelper(dirLight, 10); // debug
+world.add(dirLightHelper);
 
 // skydome
 import skyVertShader from './shaders/skyDome.vert?raw';
 import skyFragShader from './shaders/skyDome.frag?raw';
 const skyUniforms = {
     'topColor': { value: new THREE.Color(0x5078FE) },
-    'bottomColor': { value: new THREE.Color(0xffffff) },
+    'bottomColor': { value: new THREE.Color(0xf7f9ff) },
     'offset': { value: 33 },
     'exponent': { value: 0.6 }
 };

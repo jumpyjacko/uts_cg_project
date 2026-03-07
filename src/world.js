@@ -31,7 +31,7 @@ export class World {
         this.camera.position.set(10, 5, 5);
         this.camera.lookAt(0, 0, 0);
 
-        window.addEventListener('resize', this.onWindowResize.bind(this) );
+        window.addEventListener('resize', this.onWindowResize.bind(this));
 
         if (debug) {
             this.scene.add(new THREE.AxesHelper(5));
