@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { World } from './world.js';
 
-let world = new World();
+let world = new World(true); // true is enabling some debug renderers
 
 // setup scene geometry
 let geometry = new THREE.BoxGeometry(1, 1, 1);

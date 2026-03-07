@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
 export class World {
-    constructor() {
+    constructor(debug) {
         this.timer = new THREE.Timer();
         this.timer.connect(document);
 
@@ -28,6 +28,10 @@ export class World {
         this.camera.position.set(0, 10, 5);
 
         window.addEventListener('resize', this.onWindowResize.bind(this) );
+
+        if (debug) {
+            this.scene.add(new THREE.AxesHelper(5));
+        }
     }
 
     animate() {
