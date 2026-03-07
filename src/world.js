@@ -25,7 +25,7 @@ export class World {
 
         document.body.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(0, 10, 5);
+        this.camera.position.set(10, 5, 5);
         this.camera.lookAt(0, 0, 0);
 
         window.addEventListener('resize', this.onWindowResize.bind(this) );
@@ -56,8 +56,8 @@ export class World {
         this.renderer.setSize(window.innerWidth, window.innerHeight);
     }
 
-    addMesh(mesh) {
-        this.scene.add(mesh);
+    add(other) {
+        this.scene.add(other);
     }
 }
 
