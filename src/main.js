@@ -6,7 +6,7 @@ let world = new World(true); // true is enabling some debug renderers
 // setup lighting and sky
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 2);
 hemiLight.color.setHex(0x5078FE);
-hemiLight.groundColor.setHex(0x000000);
+hemiLight.groundColor.setHex(0xffffff);
 hemiLight.position.set(0, 50, 0);
 world.add(hemiLight);
 
@@ -36,6 +36,27 @@ dirLight.shadow.bias = - 0.0001;
 
 const dirLightHelper = new THREE.DirectionalLightHelper( dirLight, 10 );
 world.add( dirLightHelper );
+
+// skydome
+import skyVertShader from './shaders/skyDome.vert?raw';
+import skyFragShader from './shaders/skyDome.frag?raw';
+const skyUniforms = {
+    'topColor': { value: new THREE.Color(0x5078FE) },
+    'bottomColor': { value: new THREE.Color(0xffffff) },
+    'offset': { value: 33 },
+    'exponent': { value: 0.6 }
+};
+skyUniforms['topColor'].value.copy(hemiLight.color);
+world.scene.fog.color.copy(skyUniforms['bottomColor'].value);
+const skyGeo = new THREE.SphereGeometry(4000, 32, 15);
+const skyMat = new THREE.ShaderMaterial({
+    uniforms: skyUniforms,
+    vertexShader: skyVertShader,
+    fragmentShader: skyFragShader,
+    side: THREE.BackSide
+});
+const sky = new THREE.Mesh(skyGeo, skyMat);
+world.add(sky);
 
 // setup scene geometry
 let geometry = new THREE.BoxGeometry(1, 1, 1);
