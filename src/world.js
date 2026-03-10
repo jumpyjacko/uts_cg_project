@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
 export class World {
     constructor(debug) {
+        this.update_table = [];
+
         this.timer = new THREE.Timer();
         this.timer.connect(document);
 
@@ -18,13 +20,13 @@ export class World {
         this.renderer.setAnimationLoop(() => this.animate());
         this.renderer.shadowMap.enabled = true;
 
-        const controls = new OrbitControls(this.camera, this.renderer.domElement);
-        controls.enableZoom = true;
-        controls.minDistance = 2;
-        controls.maxDistance = 50;
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.5;
-        controls.enablePan = false;
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.enableZoom = true;
+        this.controls.minDistance = 2;
+        this.controls.maxDistance = 50;
+        this.controls.enableDamping = true;
+        this.controls.dampingFactor = 0.1;
+        this.controls.enablePan = false;
 
         document.body.appendChild(this.renderer.domElement);
 
@@ -40,15 +42,16 @@ export class World {
 
     animate() {
         this.timer.update();
+        this.controls.update();
         this.render();
     }
 
     render() {
-        // const delta = this.timer.getDelta();
+        const delta = this.timer.getDelta();
 
-        // for (let i = 0; i < mixers.length; i++) {
-        //     mixers[i].update(delta);
-        // }
+        for (const object of this.update_table) {
+            object.update(delta);
+        }
 
         this.renderer.render(this.scene, this.camera);
     }
@@ -61,6 +64,10 @@ export class World {
 
     add(other) {
         this.scene.add(other);
+
+        if (other.update) {
+            this.update_table.push(other);
+        }
     }
 }
 
