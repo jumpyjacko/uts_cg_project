@@ -59,8 +59,20 @@ const sky = new THREE.Mesh(skyGeo, skyMat);
 world.add(sky);
 
 // setup scene geometry
-let geometry = new THREE.BoxGeometry(1, 1, 1);
-let material = new THREE.MeshStandardMaterial({ color: 0xDDB565 });
-let cube = new THREE.Mesh(geometry, material);
-
+let cube = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshStandardMaterial({ color: 0xDDB565 }),
+);
 world.add(cube);
+
+let spinning_cube = new THREE.Mesh(
+    new THREE.BoxGeometry(1, 1, 1),
+    new THREE.MeshStandardMaterial({ color: 0xaee8ad }),
+);
+spinning_cube.position.set(0, 2, 0);
+spinning_cube.rotateOnAxis(new THREE.Vector3(1, 1, 0), Math.PI/2);
+spinning_cube.update = function(delta) {
+    spinning_cube.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), delta * 0.8);
+}
+world.add(spinning_cube);
+
