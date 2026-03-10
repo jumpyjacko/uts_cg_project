@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/Addons.js';
 
 export class World {
     constructor(debug) {
+        this.update_table = [];
+
         this.timer = new THREE.Timer();
         this.timer.connect(document);
 
@@ -45,11 +47,11 @@ export class World {
     }
 
     render() {
-        // const delta = this.timer.getDelta();
+        const delta = this.timer.getDelta();
 
-        // for (let i = 0; i < mixers.length; i++) {
-        //     mixers[i].update(delta);
-        // }
+        for (const object of this.update_table) {
+            object.update(delta);
+        }
 
         this.renderer.render(this.scene, this.camera);
     }
@@ -62,6 +64,10 @@ export class World {
 
     add(other) {
         this.scene.add(other);
+
+        if (other.update) {
+            this.update_table.push(other);
+        }
     }
 }
 
