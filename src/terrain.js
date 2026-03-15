@@ -8,12 +8,12 @@ export const terrain = (world) => {
     const displacement_map = drawHeightmap(perlin);
 
     const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 25, 25),
+        new THREE.PlaneGeometry(50, 50, 25, 25),
         new THREE.MeshStandardMaterial({
             wireframe: true,
             color: 0x666666,
             displacementMap: displacement_map,
-            displacementScale: 10,
+            displacementScale: 8,
         }),
     )
 
