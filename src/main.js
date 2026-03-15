@@ -1,8 +1,6 @@
 import * as THREE from 'three';
 import { World } from './world.js';
 
-import { Perlin } from './noise.js';
-
 let world = new World(true); // true is enabling some debug renderers
 
 // setup lighting and sky
@@ -42,6 +40,7 @@ world.add(dirLightHelper);
 // skydome
 import skyVertShader from './shaders/skyDome.vert?raw';
 import skyFragShader from './shaders/skyDome.frag?raw';
+import { terrain } from './terrain.js';
 const skyUniforms = {
     'topColor': { value: new THREE.Color(0x5078FE) },
     'bottomColor': { value: new THREE.Color(0xf7f9ff) },
@@ -61,43 +60,5 @@ const sky = new THREE.Mesh(skyGeo, skyMat);
 world.add(sky);
 
 // Island terrain
-let perlin = new Perlin();
+terrain(world);
 
-export function drawPerlinToCanvas(canvas, scale = 0.01) {
-    const ctx = canvas.getContext("2d");
-    const width = canvas.width;
-    const height = canvas.height;
-
-    const img = ctx.createImageData(width, height);
-    const data = img.data;
-
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            let n = perlin.get(x * scale, y * scale) +
-                perlin.get(x * (scale*2), y * (scale*2));
-
-            // convert -1..1 → 0..255
-            let v = Math.floor((n + 1) * 0.5 * 255);
-
-            let i = (y * width + x) * 4;
-
-            data[i] = v;
-            data[i + 1] = v;
-            data[i + 2] = v;
-            data[i + 3] = 255;
-        }
-    }
-
-    ctx.putImageData(img, 0, 0);
-}
-
-const canvas = document.createElement("canvas");
-drawPerlinToCanvas(canvas);
-const plane = new THREE.Mesh(
-    new THREE.PlaneGeometry(10, 10),
-    new THREE.MeshBasicMaterial({
-        map: new THREE.CanvasTexture(canvas),
-    }),
-)
-plane.position.set(0, 0, 0);
-world.add(plane);
