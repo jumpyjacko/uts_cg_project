@@ -1,6 +1,8 @@
 import * as THREE from 'three';
 import { World } from './world.js';
 
+import { Perlin } from './noise.js';
+
 let world = new World(true); // true is enabling some debug renderers
 
 // setup lighting and sky
@@ -58,21 +60,44 @@ const skyMat = new THREE.ShaderMaterial({
 const sky = new THREE.Mesh(skyGeo, skyMat);
 world.add(sky);
 
-// setup scene geometry
-let cube = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshStandardMaterial({ color: 0xDDB565 }),
-);
-world.add(cube);
+// Island terrain
+let perlin = new Perlin();
 
-let spinning_cube = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshStandardMaterial({ color: 0xaee8ad }),
-);
-spinning_cube.position.set(0, 2, 0);
-spinning_cube.rotateOnAxis(new THREE.Vector3(1, 1, 0), Math.PI/2);
-spinning_cube.update = function(delta) {
-    spinning_cube.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), delta * 0.8);
+export function drawPerlinToCanvas(canvas, scale = 0.01) {
+    const ctx = canvas.getContext("2d");
+    const width = canvas.width;
+    const height = canvas.height;
+
+    const img = ctx.createImageData(width, height);
+    const data = img.data;
+
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            let n = perlin.get(x * scale, y * scale) +
+                perlin.get(x * (scale*2), y * (scale*2));
+
+            // convert -1..1 → 0..255
+            let v = Math.floor((n + 1) * 0.5 * 255);
+
+            let i = (y * width + x) * 4;
+
+            data[i] = v;
+            data[i + 1] = v;
+            data[i + 2] = v;
+            data[i + 3] = 255;
+        }
+    }
+
+    ctx.putImageData(img, 0, 0);
 }
-world.add(spinning_cube);
 
+const canvas = document.createElement("canvas");
+drawPerlinToCanvas(canvas);
+const plane = new THREE.Mesh(
+    new THREE.PlaneGeometry(10, 10),
+    new THREE.MeshBasicMaterial({
+        map: new THREE.CanvasTexture(canvas),
+    }),
+)
+plane.position.set(0, 0, 0);
+world.add(plane);
