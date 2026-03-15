@@ -5,27 +5,28 @@ import { Perlin } from './noise.js';
 export const terrain = (world) => {
     let perlin = new Perlin();
 
-
-    const displacement_canvas = document.createElement("canvas");
-    drawPerlinToCanvas(perlin, displacement_canvas);
-    const displacement_map = new THREE.CanvasTexture(displacement_canvas);
+    const displacement_map = drawHeightmap(perlin);
 
     const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(100, 100, 100, 100),
+        new THREE.PlaneGeometry(100, 100, 25, 25),
         new THREE.MeshStandardMaterial({
+            wireframe: true,
             color: 0x666666,
             displacementMap: displacement_map,
-            displacementScale: 8,
+            displacementScale: 10,
         }),
     )
 
+    plane.castShadow = true;
+    plane.receiveShadow = true;
     plane.position.set(0, 0, 0);
     plane.rotateX(-Math.PI / 2);
     world.add(plane);
 }
 
 
-function drawPerlinToCanvas(perlin, canvas, scale = 0.01) {
+function drawHeightmap(perlin, scale = 0.01) {
+    const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     const width = canvas.width;
     const height = canvas.height;
@@ -51,4 +52,5 @@ function drawPerlinToCanvas(perlin, canvas, scale = 0.01) {
     }
 
     ctx.putImageData(img, 0, 0);
+    return new THREE.CanvasTexture(canvas);
 }
