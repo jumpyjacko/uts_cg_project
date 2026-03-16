@@ -62,7 +62,7 @@ const water = new THREE.Mesh(
     new THREE.PlaneGeometry(100, 100),
     new THREE.MeshStandardMaterial({ color: 0xa0ddff }),
 )
-water.position.set(0, 1, 0);
+water.position.set(0, 0.2, 0);
 water.rotateX(-Math.PI / 2);
 world.add(water);
 
