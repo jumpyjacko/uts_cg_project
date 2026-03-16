@@ -44,15 +44,15 @@ function drawHeightmap(perlin, scale = 0.01) {
             let dx = x - cx;
             let dy = y - cy;
             let dist = Math.sqrt(dx * dx + dy * dy);
-
             let t = dist / maxDist;
             t = Math.min(Math.max(t, 0), 1);
-
             let falloff = 1 - perlin.smootherstep(t);
+
             let n =
                 perlin.get(x * scale, y * scale) +
                 perlin.get(x * scale * 2, y * scale * 2);
             n = (n + 1) * 0.5;
+
             n *= falloff;
 
             // convert -1..1 → 0..255
