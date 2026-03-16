@@ -20,16 +20,16 @@ dirLight.position.multiplyScalar(30);
 world.add(dirLight);
 
 dirLight.castShadow = true;
-dirLight.shadow.mapSize.width = 2048;
-dirLight.shadow.mapSize.height = 2048;
+dirLight.shadow.mapSize.width = 4096;
+dirLight.shadow.mapSize.height = 4096;
 
 const d = 50;
-dirLight.shadow.camera.left = - d;
+dirLight.shadow.camera.left = -d;
 dirLight.shadow.camera.right = d;
 dirLight.shadow.camera.top = d;
-dirLight.shadow.camera.bottom = - d;
+dirLight.shadow.camera.bottom = -d;
 dirLight.shadow.camera.far = 3500;
-dirLight.shadow.bias = - 0.0001;
+dirLight.shadow.bias = -0.00;
 
 const dirLightHelper = new THREE.DirectionalLightHelper(dirLight, 10); // debug
 world.add(dirLightHelper);
@@ -46,7 +46,7 @@ const skyUniforms = {
 };
 skyUniforms['topColor'].value.copy(hemiLight.color);
 world.scene.fog.color.copy(skyUniforms['bottomColor'].value);
-const skyGeo = new THREE.SphereGeometry(4000, 32, 15);
+const skyGeo = new THREE.SphereGeometry(3500, 32, 15);
 const skyMat = new THREE.ShaderMaterial({
     uniforms: skyUniforms,
     vertexShader: skyVertShader,
@@ -58,4 +58,12 @@ world.add(sky);
 
 // Island terrain
 terrain(world);
+
+const cube = new THREE.Mesh(
+    new THREE.BoxGeometry(),
+    new THREE.MeshStandardMaterial()
+);
+cube.position.set(0, 10, 0);
+cube.castShadow = true;
+world.add(cube);
 

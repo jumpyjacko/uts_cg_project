@@ -9,8 +9,8 @@ export const terrain = (world) => {
 
     const plane = new THREE.Mesh(
         new THREE.PlaneGeometry(50, 50, 25, 25),
-        new THREE.MeshStandardMaterial({
-            wireframe: true,
+        new THREE.MeshToonMaterial({
+            // wireframe: true,
             color: 0x666666,
             displacementMap: displacement_map,
             displacementScale: 8,
