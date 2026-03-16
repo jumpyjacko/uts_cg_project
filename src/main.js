@@ -20,19 +20,16 @@ dirLight.position.multiplyScalar(30);
 world.add(dirLight);
 
 dirLight.castShadow = true;
-
-dirLight.shadow.mapSize.width = 2048;
-dirLight.shadow.mapSize.height = 2048;
+dirLight.shadow.mapSize.width = 4096;
+dirLight.shadow.mapSize.height = 4096;
 
 const d = 50;
-
-dirLight.shadow.camera.left = - d;
+dirLight.shadow.camera.left = -d;
 dirLight.shadow.camera.right = d;
 dirLight.shadow.camera.top = d;
-dirLight.shadow.camera.bottom = - d;
-
+dirLight.shadow.camera.bottom = -d;
 dirLight.shadow.camera.far = 3500;
-dirLight.shadow.bias = - 0.0001;
+dirLight.shadow.bias = -0.00;
 
 const dirLightHelper = new THREE.DirectionalLightHelper(dirLight, 10); // debug
 world.add(dirLightHelper);
@@ -40,6 +37,7 @@ world.add(dirLightHelper);
 // skydome
 import skyVertShader from './shaders/skyDome.vert?raw';
 import skyFragShader from './shaders/skyDome.frag?raw';
+import { terrain } from './terrain.js';
 const skyUniforms = {
     'topColor': { value: new THREE.Color(0x5078FE) },
     'bottomColor': { value: new THREE.Color(0xf7f9ff) },
@@ -48,7 +46,7 @@ const skyUniforms = {
 };
 skyUniforms['topColor'].value.copy(hemiLight.color);
 world.scene.fog.color.copy(skyUniforms['bottomColor'].value);
-const skyGeo = new THREE.SphereGeometry(4000, 32, 15);
+const skyGeo = new THREE.SphereGeometry(3500, 32, 15);
 const skyMat = new THREE.ShaderMaterial({
     uniforms: skyUniforms,
     vertexShader: skyVertShader,
@@ -58,21 +56,23 @@ const skyMat = new THREE.ShaderMaterial({
 const sky = new THREE.Mesh(skyGeo, skyMat);
 world.add(sky);
 
-// setup scene geometry
-let cube = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshStandardMaterial({ color: 0xDDB565 }),
-);
-world.add(cube);
+// Island terrain
+terrain(world);
 
-let spinning_cube = new THREE.Mesh(
-    new THREE.BoxGeometry(1, 1, 1),
-    new THREE.MeshStandardMaterial({ color: 0xaee8ad }),
+const water = new THREE.Mesh(
+    new THREE.PlaneGeometry(100, 100),
+    new THREE.MeshStandardMaterial({ color: 0xa0ddff }),
+)
+water.position.set(0, 0.2, 0);
+water.rotateX(-Math.PI / 2);
+world.add(water);
+
+// test cube
+const cube = new THREE.Mesh(
+    new THREE.BoxGeometry(),
+    new THREE.MeshStandardMaterial()
 );
-spinning_cube.position.set(0, 2, 0);
-spinning_cube.rotateOnAxis(new THREE.Vector3(1, 1, 0), Math.PI/2);
-spinning_cube.update = function(delta) {
-    spinning_cube.rotateOnWorldAxis(new THREE.Vector3(0, 1, 0), delta * 0.8);
-}
-world.add(spinning_cube);
+cube.position.set(0, 10, 0);
+cube.castShadow = true;
+world.add(cube);
 
