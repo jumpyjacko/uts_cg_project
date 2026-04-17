@@ -21,8 +21,8 @@ spotlight.angle = 70;
 world.add(spotlight);
 
 spotlight.castShadow = true;
-spotlight.shadow.mapSize.width = 4096;
-spotlight.shadow.mapSize.height = 4096;
+spotlight.shadow.mapSize.width = 8192;
+spotlight.shadow.mapSize.height = 8192;
 
 const d = 50;
 spotlight.shadow.camera.left = -d;
