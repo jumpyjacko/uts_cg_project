@@ -5,7 +5,7 @@ let world = new World(true); // true is enabling some debug renderers
 
 // setup lighting and sky
 const hemiLight = new THREE.HemisphereLight(0xffffff, 0xffffff, 2);
-hemiLight.color.setHex(0x5078FE);
+hemiLight.color.setHex(0x7098FE);
 hemiLight.groundColor.setHex(0xf7f9ff);
 hemiLight.position.set(0, 50, 0);
 world.add(hemiLight);
@@ -13,25 +13,26 @@ world.add(hemiLight);
 const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10); // debug
 world.add(hemiLightHelper);
 
-const dirLight = new THREE.DirectionalLight(0xffffff, 3);
-dirLight.color.setHSL(0.1, 1, 0.95);
-dirLight.position.set(-1, 1.75, 1);
-dirLight.position.multiplyScalar(30);
-world.add(dirLight);
+const spotlight = new THREE.SpotLight(0xffffff, 3);
+spotlight.position.set(-1, 1.75, 1);
+spotlight.position.multiplyScalar(20);
+spotlight.power = 9001;
+spotlight.angle = 70;
+world.add(spotlight);
 
-dirLight.castShadow = true;
-dirLight.shadow.mapSize.width = 4096;
-dirLight.shadow.mapSize.height = 4096;
+spotlight.castShadow = true;
+spotlight.shadow.mapSize.width = 4096;
+spotlight.shadow.mapSize.height = 4096;
 
 const d = 50;
-dirLight.shadow.camera.left = -d;
-dirLight.shadow.camera.right = d;
-dirLight.shadow.camera.top = d;
-dirLight.shadow.camera.bottom = -d;
-dirLight.shadow.camera.far = 3500;
-dirLight.shadow.bias = -0.00;
+spotlight.shadow.camera.left = -d;
+spotlight.shadow.camera.right = d;
+spotlight.shadow.camera.top = d;
+spotlight.shadow.camera.bottom = -d;
+spotlight.shadow.camera.far = 3500;
+spotlight.shadow.bias = -0.00;
 
-const dirLightHelper = new THREE.DirectionalLightHelper(dirLight, 10); // debug
+const dirLightHelper = new THREE.SpotLightHelper(spotlight, 10); // debug
 world.add(dirLightHelper);
 
 // skydome
@@ -58,14 +59,6 @@ world.add(sky);
 
 // Island terrain
 terrain(world);
-
-const water = new THREE.Mesh(
-    new THREE.PlaneGeometry(100, 100),
-    new THREE.MeshStandardMaterial({ color: 0xa0ddff }),
-)
-water.position.set(0, 0.2, 0);
-water.rotateX(-Math.PI / 2);
-world.add(water);
 
 // test cube
 const cube = new THREE.Mesh(
