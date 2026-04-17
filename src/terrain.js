@@ -44,7 +44,7 @@ export const terrain = (world, noiseScale = 0.1, elevationScale = 10) => {
             const height = 1 + (noiseValue * elevationScale);
             const geometry = new THREE.CylinderGeometry(size, size, height, 6);
             const material = new THREE.MeshStandardMaterial({ 
-                color: new THREE.Color().setHSL(0.3, 0.5, 0.2 + noiseValue * 0.5), 
+                color: new THREE.Color().setHSL(0.3, 0.5, 0.5), 
                 flatShading: true,
             });
             
