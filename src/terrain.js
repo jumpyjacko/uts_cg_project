@@ -2,70 +2,60 @@ import * as THREE from 'three';
 
 import { Perlin } from './noise.js';
 
-export const terrain = (world) => {
-    let perlin = new Perlin();
+export const terrain = (world, noiseScale = 0.1, elevationScale = 10) => {
+    const perlin = new Perlin();
+    const terrain = new THREE.Group();
+    
+    const size = 1; 
+    const gridWidth = 20;
+    const gridHeight = 25;
 
-    const displacement_map = drawHeightmap(perlin);
+    const hexW = Math.sqrt(3) * size;
+    const hexH = (3/2) * size;
 
-    const plane = new THREE.Mesh(
-        new THREE.PlaneGeometry(50, 50, 10, 10),
-        new THREE.MeshToonMaterial({
-            // wireframe: true,
-            color: 0xaaffaa,
-            displacementMap: displacement_map,
-            displacementScale: 10,
-        }),
-    )
+    const totalWidth = (gridWidth - 1) * hexW;
+    const totalHeight = (gridHeight - 1) * hexH;
 
-    plane.castShadow = true;
-    plane.receiveShadow = true;
-    plane.position.set(0, -1, 0);
-    plane.rotateX(-Math.PI / 2);
-    world.add(plane);
-}
+    const offsetX = -totalWidth / 2;
+    const offsetZ = -totalHeight / 2;
 
+    for (let q = 0; q < gridWidth; q++) {
+        for (let r = 0; r < gridHeight; r++) {
+            let posX = q * hexW;
+            if (r % 2 === 1) posX += hexW / 2;
+            let posZ = r * hexH;
 
-function drawHeightmap(perlin, scale = 0.01) {
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    const width = canvas.width = 128;
-    const height = canvas.height = 128;
+            const finalX = posX + offsetX;
+            const finalZ = posZ + offsetZ;
 
-    const img = ctx.createImageData(width, height);
-    const data = img.data;
-
-    const cx = width / 2;
-    const cy = height / 2;
-    const maxDist = Math.sqrt(cx * cx + cy * cy);
-    for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-            // radial gradient
-            let dx = x - cx;
-            let dy = y - cy;
-            let dist = Math.sqrt(dx * dx + dy * dy);
+            let dist = Math.sqrt(finalX * finalX + finalZ * finalZ);
+            const maxDist = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2)) * 0.8;
+            
             let t = dist / maxDist;
             t = Math.min(Math.max(t, 0), 1);
-            let falloff = 1 - perlin.smootherstep(t);
+            
+            let falloff = 1 - Math.pow(t, 2); 
+            falloff = Math.max(0, falloff);
 
-            let n =
-                perlin.get(x * scale, y * scale) +
-                perlin.get(x * scale * 2, y * scale * 2);
-            n = (n + 1) * 0.5;
+            let noiseValue = perlin.get(finalX * noiseScale, finalZ * noiseScale);
+            noiseValue = (noiseValue + 1) * 0.5; 
+            noiseValue *= falloff;
 
-            n *= falloff;
-
-            // convert -1..1 → 0..255
-            let v = Math.floor(n * 255);
-
-            let i = (y * width + x) * 4;
-
-            data[i] = v;
-            data[i + 1] = v;
-            data[i + 2] = v;
-            data[i + 3] = 255;
+            const height = 1 + (noiseValue * elevationScale);
+            const geometry = new THREE.CylinderGeometry(size, size, height, 6);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: new THREE.Color().setHSL(0.3, 0.5, 0.2 + noiseValue * 0.5) 
+            });
+            
+            const hex = new THREE.Mesh(geometry, material);
+            hex.castShadow = true;
+            hex.receiveShadow = true;
+            
+            hex.position.set(finalX, height / 2, finalZ);
+            
+            terrain.add(hex);
         }
     }
 
-    ctx.putImageData(img, 0, 0);
-    return new THREE.CanvasTexture(canvas);
-}
+    world.add(terrain);
+};
