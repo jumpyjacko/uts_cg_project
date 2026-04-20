@@ -24,7 +24,7 @@ export class Sky {
 
         this.pivot = new THREE.Object3D();
         const dirLight = new THREE.DirectionalLight(0xFFF9eb, 3);
-        dirLight.intensity = 5;
+        dirLight.intensity = 3;
         dirLight.position.set(0, 100, 0);
         dirLight.target = this.pivot;
         this.pivot.add(dirLight);
@@ -66,7 +66,7 @@ export class Sky {
     }
 
     update(delta) {
-        this.pivot.rotation.z += 0.1 * delta;
+        this.pivot.rotation.z += 0.01 * delta;
         
         if (this.spotlightHelper) {
             this.spotlightHelper.update();
