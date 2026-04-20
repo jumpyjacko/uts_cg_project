@@ -13,10 +13,10 @@ world.add(hemiLight);
 const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10); // debug
 world.add(hemiLightHelper);
 
-const spotlight = new THREE.SpotLight(0xffffff, 3);
+const spotlight = new THREE.SpotLight(0xFFF9FF, 3);
 spotlight.position.set(-1, 1.75, 1);
-spotlight.position.multiplyScalar(20);
-spotlight.power = 9001;
+spotlight.position.multiplyScalar(30);
+spotlight.power = 17000;
 spotlight.angle = 70;
 world.add(spotlight);
 
@@ -59,7 +59,7 @@ world.add(sky);
 
 // Island terrain
 terrain(world);
-const oceanGeo = new THREE.PlaneGeometry(100, 100, 1, 1);
+const oceanGeo = new THREE.PlaneGeometry(500, 500, 1, 1);
 const oceanMat = new THREE.MeshStandardMaterial({
     color: 0x0000ff,
 });
