@@ -24,12 +24,16 @@ export class Sky {
         const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10); // debug
         this.group.add(hemiLightHelper);
 
+        const spotlightPivot = new THREE.Object3D();
         const spotlight = new THREE.SpotLight(0xFFF9FF, 3);
         spotlight.position.set(-1, 1.75, 1);
         spotlight.position.multiplyScalar(30);
         spotlight.power = 17000;
         spotlight.angle = 70;
-        this.group.add(spotlight);
+
+        spotlight.target.spotlightPivot();
+        spotlightPivot.add(spotlight);
+        this.group.add(spotlightPivot);
 
         const d = 50;
         spotlight.castShadow = true;
