@@ -21,7 +21,6 @@ ocean.rotateX(-Math.PI / 2);
 ocean.position.set(0, 0.3, 0);
 world.add(ocean);
 
-
 // test cube
 const cube = new THREE.Mesh(
     new THREE.BoxGeometry(),

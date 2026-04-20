@@ -68,8 +68,12 @@ export class World {
         this.scene.add(other);
 
         if (other.update) {
-            this.update_table.push(other);
+            this.addToUpdateTable(other);
         }
+    }
+
+    addToUpdateTable(other) {
+        this.update_table.push(other);
     }
 }
 

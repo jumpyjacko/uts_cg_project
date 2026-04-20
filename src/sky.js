@@ -31,11 +31,10 @@ export class Sky {
         spotlight.angle = 70;
         this.group.add(spotlight);
 
+        const d = 50;
         spotlight.castShadow = true;
         spotlight.shadow.mapSize.width = 8192;
         spotlight.shadow.mapSize.height = 8192;
-
-        const d = 50;
         spotlight.shadow.camera.left = -d;
         spotlight.shadow.camera.right = d;
         spotlight.shadow.camera.top = d;
@@ -43,8 +42,8 @@ export class Sky {
         spotlight.shadow.camera.far = 500;
         spotlight.shadow.bias = -0.00;
 
-        const dirLightHelper = new THREE.SpotLightHelper(spotlight, 10); // debug
-        this.group.add(dirLightHelper);
+        const spotlightHelper = new THREE.SpotLightHelper(spotlight, 10); // debug
+        this.group.add(spotlightHelper);
 
         // skydome
         const skyUniforms = {
@@ -63,5 +62,10 @@ export class Sky {
         });
         const sky = new THREE.Mesh(skyGeo, skyMat);
         this.group.add(sky);
+
+
+    }
+
+    update(delta) {
     }
 }
