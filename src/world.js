@@ -23,11 +23,12 @@ export class World {
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = true;
-        this.controls.minDistance = 2;
+        this.controls.minDistance = 50;
         this.controls.maxDistance = 100;
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.1;
         this.controls.enablePan = false;
+        this.controls.maxPolarAngle = (Math.PI / 2) - 0.1;
 
         document.body.appendChild(this.renderer.domElement);
 
