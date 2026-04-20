@@ -70,7 +70,7 @@ export class Sky {
         this.sun.getWorldPosition(sunWorldPosition);
         let dayFactor = sunWorldPosition.y / 100;
 
-        let speed = dayFactor > 0 ? 0.05 : 0.5;
+        let speed = dayFactor > 0 ? 0.05 : 0.25;
         this.sunAngle = (this.sunAngle || 0) + speed * delta;
         this.pivot.rotation.z = this.sunAngle;
         
@@ -84,23 +84,38 @@ export class Sky {
         let finalSky = new THREE.Color();
         let finalFog = new THREE.Color();
 
-        if (dayFactor > 0.05) {
-            const lerpIn = (dayFactor - 0.05) / 0.95;
-            finalSky.copy(sunsetSky).lerp(noonSky, lerpIn);
-            finalFog.copy(nightFog).lerp(noonFog, dayFactor);
-            this.sun.intensity = dayFactor * 4.0;
-        } else if (dayFactor <= 0.05 && dayFactor > -0.1) {
-            const lerpOut = (dayFactor + 0.1) / 0.2;
-            finalSky.copy(nightSky).lerp(sunsetSky, lerpOut);
+        const rawHeight = sunWorldPosition.y / 100;
+
+        const dayThreshold = 0.2;
+        const sunsetThreshold = -0.1;
+
+        if (rawHeight > dayThreshold) {
+            finalSky.copy(noonSky);
+            finalFog.copy(noonFog);
+            this.sun.intensity = 4.0;
+        } 
+        else if (rawHeight <= dayThreshold && rawHeight > 0) {
+            let dayToSunsetFactor = rawHeight / dayThreshold;
+            
+            dayToSunsetFactor = Math.pow(dayToSunsetFactor, 0.5); 
+            
+            finalSky.copy(sunsetSky).lerp(noonSky, dayToSunsetFactor);
+            finalFog.copy(nightFog).lerp(noonFog, dayToSunsetFactor);
+            this.sun.intensity = dayToSunsetFactor * 4.0;
+        } 
+        else if (rawHeight <= 0 && rawHeight > sunsetThreshold) {
+            const duskFactor = (rawHeight - sunsetThreshold) / (0 - sunsetThreshold);
+            
+            finalSky.copy(nightSky).lerp(sunsetSky, duskFactor);
             finalFog.copy(nightFog);
-            this.sun.intensity = Math.max(0.1, dayFactor * 4.0);
-        } else {
+            this.sun.intensity = 0;
+        } 
+        else {
             finalSky.copy(nightSky);
             finalFog.copy(nightFog);
-            this.sun.intensity = 0.0;
+            this.sun.intensity = 0;
         }
 
-        // 4. Update Uniforms
         if (this.skyUniforms) {
             this.skyUniforms['topColor'].value.copy(finalSky);
             this.skyUniforms['bottomColor'].value.copy(finalFog);
