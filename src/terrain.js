@@ -6,7 +6,7 @@ export const terrain = (world, noiseScale = 0.1, elevationScale = 10) => {
     const perlin = new Perlin();
     const terrain = new THREE.Group();
 
-    const size = 1;
+    const size = 2;
     const gridWidth = 20;
     const gridHeight = 25;
 
