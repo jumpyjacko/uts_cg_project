@@ -59,6 +59,15 @@ world.add(sky);
 
 // Island terrain
 terrain(world);
+const oceanGeo = new THREE.PlaneGeometry(100, 100, 1, 1);
+const oceanMat = new THREE.MeshStandardMaterial({
+    color: 0x0000ff,
+});
+const ocean = new THREE.Mesh(oceanGeo, oceanMat);
+ocean.rotateX(-Math.PI / 2);
+ocean.position.set(0, 0.3, 0);
+world.add(ocean);
+
 
 // test cube
 const cube = new THREE.Mesh(
