@@ -29,7 +29,7 @@ spotlight.shadow.camera.left = -d;
 spotlight.shadow.camera.right = d;
 spotlight.shadow.camera.top = d;
 spotlight.shadow.camera.bottom = -d;
-spotlight.shadow.camera.far = 3500;
+spotlight.shadow.camera.far = 500;
 spotlight.shadow.bias = -0.00;
 
 const dirLightHelper = new THREE.SpotLightHelper(spotlight, 10); // debug
@@ -47,7 +47,7 @@ const skyUniforms = {
 };
 skyUniforms['topColor'].value.copy(hemiLight.color);
 world.scene.fog.color.copy(skyUniforms['bottomColor'].value);
-const skyGeo = new THREE.SphereGeometry(3500, 32, 15);
+const skyGeo = new THREE.SphereGeometry(200, 32, 15);
 const skyMat = new THREE.ShaderMaterial({
     uniforms: skyUniforms,
     vertexShader: skyVertShader,
