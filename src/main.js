@@ -8,7 +8,8 @@ let world = new World(true); // true is enabling some debug renderers
 
 // setup lighting and sky
 let sky = new Sky();
-world.add(sky);
+world.add(sky.group);
+world.addToUpdateTable(sky);
 
 // Island terrain
 terrain(world);

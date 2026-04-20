@@ -9,8 +9,6 @@ export class Sky {
         this.fog_colour = 0xf7f9ff;
 
         this.create();
-
-        return this.group;
     }
 
     create() {
@@ -24,30 +22,27 @@ export class Sky {
         const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10); // debug
         this.group.add(hemiLightHelper);
 
-        const spotlightPivot = new THREE.Object3D();
-        const spotlight = new THREE.SpotLight(0xFFF9FF, 3);
-        spotlight.position.set(-1, 1.75, 1);
-        spotlight.position.multiplyScalar(30);
-        spotlight.power = 17000;
-        spotlight.angle = 70;
-
-        spotlight.target.spotlightPivot();
-        spotlightPivot.add(spotlight);
-        this.group.add(spotlightPivot);
+        this.pivot = new THREE.Object3D();
+        const dirLight = new THREE.DirectionalLight(0xFFF9eb, 3);
+        dirLight.intensity = 5;
+        dirLight.position.set(0, 100, 0);
+        dirLight.target = this.pivot;
+        this.pivot.add(dirLight);
+        this.group.add(this.pivot);
 
         const d = 50;
-        spotlight.castShadow = true;
-        spotlight.shadow.mapSize.width = 8192;
-        spotlight.shadow.mapSize.height = 8192;
-        spotlight.shadow.camera.left = -d;
-        spotlight.shadow.camera.right = d;
-        spotlight.shadow.camera.top = d;
-        spotlight.shadow.camera.bottom = -d;
-        spotlight.shadow.camera.far = 500;
-        spotlight.shadow.bias = -0.00;
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 8192;
+        dirLight.shadow.mapSize.height = 8192;
+        dirLight.shadow.camera.left = -d;
+        dirLight.shadow.camera.right = d;
+        dirLight.shadow.camera.top = d;
+        dirLight.shadow.camera.bottom = -d;
+        dirLight.shadow.camera.far = 500;
+        dirLight.shadow.bias = -0.00;
 
-        const spotlightHelper = new THREE.SpotLightHelper(spotlight, 10); // debug
-        this.group.add(spotlightHelper);
+        this.spotlightHelper = new THREE.DirectionalLightHelper(dirLight, 10); // debug
+        this.group.add(this.spotlightHelper);
 
         // skydome
         const skyUniforms = {
@@ -71,5 +66,10 @@ export class Sky {
     }
 
     update(delta) {
+        this.pivot.rotation.z += 0.1 * delta;
+        
+        if (this.spotlightHelper) {
+            this.spotlightHelper.update();
+        }
     }
 }
