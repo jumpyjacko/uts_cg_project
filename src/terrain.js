@@ -2,7 +2,7 @@ import * as THREE from 'three';
 
 import { Perlin } from './noise.js';
 
-export const terrain = (world, noiseScale = 0.1, elevationScale = 10) => {
+export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const perlin = new Perlin();
     const terrain = new THREE.Group();
 
@@ -10,8 +10,8 @@ export const terrain = (world, noiseScale = 0.1, elevationScale = 10) => {
     const gridWidth = 20;
     const gridHeight = 25;
 
-    const hexW = Math.sqrt(3) * size;
-    const hexH = (3 / 2) * size;
+    const hexW = Math.sqrt(3) * size + 0.25;
+    const hexH = (3 / 2) * size + 0.1;
 
     const totalWidth = (gridWidth - 1) * hexW;
     const totalHeight = (gridHeight - 1) * hexH;
@@ -31,29 +31,25 @@ export const terrain = (world, noiseScale = 0.1, elevationScale = 10) => {
             let dist = Math.sqrt(finalX * finalX + finalZ * finalZ);
             const maxDist = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2)) * 0.8;
 
-            let t = dist / maxDist;
-            t = Math.min(Math.max(t, 0), 1);
 
-            let falloff = 1 - Math.pow(t, 2);
-            falloff = Math.max(0, falloff);
+            if (dist > maxDist) { continue; }
 
             let noiseValue = perlin.get(finalX * noiseScale, finalZ * noiseScale);
             noiseValue = (noiseValue + 1) * 0.5;
-            noiseValue *= falloff;
 
             if (noiseValue === 0) continue;
 
             const grassMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHSL(0.3, 0.5, 0.5),
+                color: new THREE.Color().setHex(0x6a994e),
                 flatShading: true,
             });
             const sandMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0xd6d0c3),
+                color: new THREE.Color().setHex(0xfefae0),
                 flatShading: true,
             });
 
 
-            const height = 1 + (noiseValue * elevationScale);
+            const height = (noiseValue * elevationScale);
             const geometry = new THREE.CylinderGeometry(size, size, height, 6);
             const hex = new THREE.Mesh(geometry, noiseValue < 0.15 ? sandMaterial : grassMaterial);
             hex.castShadow = true;

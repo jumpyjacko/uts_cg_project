@@ -4,7 +4,7 @@ import skyVertShader from './shaders/skyDome.vert?raw';
 import skyFragShader from './shaders/skyDome.frag?raw';
 
 export class Sky {
-    constructor(colour = 0x7098fe) {
+    constructor(colour = 0x7098ae) {
         this.skyColour = colour;
         this.fogColour = 0xf7f9ff;
 
@@ -23,8 +23,8 @@ export class Sky {
         this.group.add(hemiLightHelper);
 
         this.pivot = new THREE.Object3D();
-        this.sun = new THREE.DirectionalLight(0xFFF9eb, 3);
-        this.sun.intensity = 3;
+        this.sun = new THREE.DirectionalLight(0xFFFfff, 3);
+        this.sun.intensity = 1;
         this.sun.position.set(0, 100, 0);
         this.sun.target = this.pivot;
         this.pivot.add(this.sun);
@@ -41,8 +41,8 @@ export class Sky {
         this.sun.shadow.camera.far = 500;
         this.sun.shadow.bias = -0.00;
 
-        this.spotlightHelper = new THREE.DirectionalLightHelper(this.sun, 10); // debug
-        this.group.add(this.spotlightHelper);
+        this.dirLightHelper = new THREE.DirectionalLightHelper(this.sun, 10); // debug
+        this.group.add(this.dirLightHelper);
 
         // skydome
         this.skyUniforms = {
@@ -61,8 +61,6 @@ export class Sky {
         });
         const sky = new THREE.Mesh(skyGeo, skyMat);
         this.group.add(sky);
-
-
     }
 
     update(delta) {
@@ -70,7 +68,7 @@ export class Sky {
         this.sun.getWorldPosition(sunWorldPosition);
         let dayFactor = sunWorldPosition.y / 100;
 
-        let speed = dayFactor > 0 ? 0.05 : 0.25;
+        let speed = dayFactor > 0 ? 0.01 : 0.15;
         this.sunAngle = (this.sunAngle || 0) + speed * delta;
         this.pivot.rotation.z = this.sunAngle;
         
@@ -121,8 +119,8 @@ export class Sky {
             this.skyUniforms['bottomColor'].value.copy(finalFog);
         }
 
-        if (this.spotlightHelper) {
-            this.spotlightHelper.update();
+        if (this.dirLightHelper) {
+            this.dirLightHelper.update();
         }
     }
 }

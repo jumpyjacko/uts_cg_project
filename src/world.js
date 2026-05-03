@@ -32,7 +32,7 @@ export class World {
 
         document.body.appendChild(this.renderer.domElement);
 
-        this.camera.position.set(10, 5, 5);
+        this.camera.position.set(50, 50, 50);
         this.camera.lookAt(0, 0, 0);
 
         window.addEventListener('resize', this.onWindowResize.bind(this));

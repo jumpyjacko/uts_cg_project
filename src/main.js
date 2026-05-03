@@ -15,7 +15,7 @@ world.addToUpdateTable(sky);
 terrain(world);
 const oceanGeo = new THREE.PlaneGeometry(500, 500, 1, 1);
 const oceanMat = new THREE.MeshStandardMaterial({
-    color: 0x0000ff,
+    color: 0x124559,
 });
 const ocean = new THREE.Mesh(oceanGeo, oceanMat);
 ocean.rotateX(-Math.PI / 2);
