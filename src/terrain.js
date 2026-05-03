@@ -7,8 +7,8 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const terrain = new THREE.Group();
 
     const size = 2;
-    const gridWidth = 20;
-    const gridHeight = 25;
+    const gridWidth = 40;
+    const gridHeight = 45;
 
     const hexW = Math.sqrt(3) * size + 0.25;
     const hexH = (3 / 2) * size + 0.1;
@@ -29,7 +29,7 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
             const finalZ = posZ + offsetZ;
 
             let dist = Math.sqrt(finalX * finalX + finalZ * finalZ);
-            const maxDist = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2)) * 0.8;
+            const maxDist = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2)) * 0.50;
 
 
             if (dist > maxDist) { continue; }
