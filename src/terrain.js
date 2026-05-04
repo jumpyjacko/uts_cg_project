@@ -11,7 +11,7 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const gridHeight = 45;
 
     const hexW = Math.sqrt(3) * size + 0.25;
-    const hexH = (3 / 2) * size + 0.1;
+    const hexH = (3 / 2) * size + 0.01;
 
     const totalWidth = (gridWidth - 1) * hexW;
     const totalHeight = (gridHeight - 1) * hexH;
@@ -30,7 +30,6 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
 
             let dist = Math.sqrt(finalX * finalX + finalZ * finalZ);
             const maxDist = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2)) * 0.50;
-
 
             if (dist > maxDist) { continue; }
 
@@ -55,7 +54,7 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
             hex.castShadow = true;
             hex.receiveShadow = true;
 
-            hex.position.set(finalX, height / 2, finalZ);
+            hex.position.set(finalX, height/2, finalZ);
 
             terrain.add(hex);
         }

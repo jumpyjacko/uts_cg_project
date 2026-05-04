@@ -13,7 +13,7 @@ export class World {
         this.scene.background = new THREE.Color().setHSL(0.6, 0, 1);
         this.scene.fog = new THREE.Fog(this.scene.background, 1, 3500);
 
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 4000);
+        this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 4000);
 
         this.renderer = new THREE.WebGLRenderer();
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -26,7 +26,7 @@ export class World {
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = true;
         this.controls.minDistance = 50;
-        this.controls.maxDistance = 100;
+        this.controls.maxDistance = 200;
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.1;
         this.controls.enablePan = false;
