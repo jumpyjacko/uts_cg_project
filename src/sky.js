@@ -15,7 +15,7 @@ export class Sky {
         this.group = new THREE.Group();
 
         // lighting
-        this.group.add(new THREE.AmbientLight(0xffffff, 1));
+        this.group.add(new THREE.AmbientLight(0xffffff, 2));
         this.hemiLight = new THREE.HemisphereLight(this.skyColour, this.fogColour, 5);
         this.hemiLight.position.set(0, 75, 0);
         this.group.add(this.hemiLight);
@@ -24,7 +24,7 @@ export class Sky {
         this.group.add(hemiLightHelper);
 
         this.pivot = new THREE.Object3D();
-        this.sun = new THREE.DirectionalLight(0xFFdddd);
+        this.sun = new THREE.DirectionalLight(0xFFeaea);
         this.sun.position.set(0, 100, 0);
         this.sun.target = this.pivot;
         this.pivot.add(this.sun);
@@ -90,7 +90,7 @@ export class Sky {
         if (rawHeight > dayThreshold) {
             finalSky.copy(noonSky);
             finalFog.copy(noonFog);
-            this.sun.intensity = 4.0;
+            this.sun.intensity = 5;
         } 
         else if (rawHeight <= dayThreshold && rawHeight > 0) {
             let dayToSunsetFactor = rawHeight / dayThreshold;

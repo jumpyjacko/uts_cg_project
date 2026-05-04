@@ -40,7 +40,7 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
             if (noiseValue === 0) continue;
 
             const grassMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0x6a994e),
+                color: new THREE.Color().setHex(0x6a7a4a),
                 flatShading: true,
             });
             const sandMaterial = new THREE.MeshStandardMaterial({

@@ -41,15 +41,15 @@ export class World {
         this.composer.addPass(saoPass);
         saoPass.params = {
 			output: 0,
-			saoBias: 0.7,
-			saoIntensity: 0.0025,
-			saoScale: 10,
-			saoKernelRadius: 40,
+			saoBias: 0.5,
+			saoIntensity: 0.004,
+			saoScale: 17,
+			saoKernelRadius: 50,
 			saoMinResolution: 0,
 			saoBlur: true,
 			saoBlurRadius: 2,
 			saoBlurStdDev: 4,
-			saoBlurDepthCutoff: 0.1
+			saoBlurDepthCutoff: 0.01
 		};
         // end post processing
 
