@@ -4,8 +4,8 @@ import skyVertShader from './shaders/skyDome.vert?raw';
 import skyFragShader from './shaders/skyDome.frag?raw';
 
 export class Sky {
-    constructor(colour = 0x7098ae) {
-        this.skyColour = colour;
+    constructor() {
+        this.skyColour = 0x5098ae;
         this.fogColour = 0xf7f9ff;
 
         this.create();
@@ -15,16 +15,15 @@ export class Sky {
         this.group = new THREE.Group();
 
         // lighting
-        const hemiLight = new THREE.HemisphereLight(this.skyColour, this.fogColour, 2);
-        hemiLight.position.set(0, 50, 0);
-        this.group.add(hemiLight);
+        this.hemiLight = new THREE.HemisphereLight(this.skyColour, this.fogColour, 1);
+        this.hemiLight.position.set(0, 75, 0);
+        this.group.add(this.hemiLight);
 
-        const hemiLightHelper = new THREE.HemisphereLightHelper(hemiLight, 10); // debug
+        const hemiLightHelper = new THREE.HemisphereLightHelper(this.hemiLight, 10); // debug
         this.group.add(hemiLightHelper);
 
         this.pivot = new THREE.Object3D();
-        this.sun = new THREE.DirectionalLight(0xFFFfff, 3);
-        this.sun.intensity = 1;
+        this.sun = new THREE.DirectionalLight(0xFFdddd);
         this.sun.position.set(0, 100, 0);
         this.sun.target = this.pivot;
         this.pivot.add(this.sun);
@@ -32,8 +31,8 @@ export class Sky {
 
         const d = 50;
         this.sun.castShadow = true;
-        this.sun.shadow.mapSize.width = 8192;
-        this.sun.shadow.mapSize.height = 8192;
+        this.sun.shadow.mapSize.width = 2048;
+        this.sun.shadow.mapSize.height = 2048;
         this.sun.shadow.camera.left = -d;
         this.sun.shadow.camera.right = d;
         this.sun.shadow.camera.top = d;
@@ -51,7 +50,7 @@ export class Sky {
             'offset': { value: 33 },
             'exponent': { value: 0.6 }
         };
-        this.skyUniforms['topColor'].value.copy(hemiLight.color);
+        this.skyUniforms['topColor'].value.copy(this.hemiLight.color);
         const skyGeo = new THREE.SphereGeometry(200, 32, 15);
         const skyMat = new THREE.ShaderMaterial({
             uniforms: this.skyUniforms,
@@ -69,7 +68,7 @@ export class Sky {
         let dayFactor = sunWorldPosition.y / 100;
 
         let speed = dayFactor > 0 ? 0.01 : 0.15;
-        this.sunAngle = (this.sunAngle || 0) + speed * delta;
+        this.sunAngle = (this.sunAngle || 0.5) + speed * delta;
         this.pivot.rotation.z = this.sunAngle;
         
 
@@ -90,7 +89,7 @@ export class Sky {
         if (rawHeight > dayThreshold) {
             finalSky.copy(noonSky);
             finalFog.copy(noonFog);
-            this.sun.intensity = 4.0;
+            this.sun.intensity = 3.0;
         } 
         else if (rawHeight <= dayThreshold && rawHeight > 0) {
             let dayToSunsetFactor = rawHeight / dayThreshold;

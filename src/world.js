@@ -20,6 +20,7 @@ export class World {
         this.renderer.setAnimationLoop(() => this.animate());
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFShadowMap;
+        this.renderer.outputColorSpace = THREE.SRGBColorSpace;
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = true;
