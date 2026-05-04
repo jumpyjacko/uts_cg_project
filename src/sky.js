@@ -15,7 +15,8 @@ export class Sky {
         this.group = new THREE.Group();
 
         // lighting
-        this.hemiLight = new THREE.HemisphereLight(this.skyColour, this.fogColour, 1);
+        this.group.add(new THREE.AmbientLight(0xffffff, 1));
+        this.hemiLight = new THREE.HemisphereLight(this.skyColour, this.fogColour, 5);
         this.hemiLight.position.set(0, 75, 0);
         this.group.add(this.hemiLight);
 
@@ -89,7 +90,7 @@ export class Sky {
         if (rawHeight > dayThreshold) {
             finalSky.copy(noonSky);
             finalFog.copy(noonFog);
-            this.sun.intensity = 3.0;
+            this.sun.intensity = 4.0;
         } 
         else if (rawHeight <= dayThreshold && rawHeight > 0) {
             let dayToSunsetFactor = rawHeight / dayThreshold;

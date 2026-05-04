@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { EffectComposer, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
 
 export class World {
     constructor(debug) {
@@ -31,6 +32,27 @@ export class World {
         this.controls.enablePan = false;
         this.controls.maxPolarAngle = (Math.PI / 2) - 0.1;
 
+        // init post processing
+        this.composer = new EffectComposer(this.renderer);
+        const renderPass = new RenderPass(this.scene, this.camera);
+        this.composer.addPass(renderPass);
+
+        const saoPass = new SAOPass(this.scene, this.camera, true, true);
+        this.composer.addPass(saoPass);
+        saoPass.params = {
+			output: 0,
+			saoBias: 0.7,
+			saoIntensity: 0.0025,
+			saoScale: 10,
+			saoKernelRadius: 40,
+			saoMinResolution: 0,
+			saoBlur: true,
+			saoBlurRadius: 2,
+			saoBlurStdDev: 4,
+			saoBlurDepthCutoff: 0.1
+		};
+        // end post processing
+
         document.body.appendChild(this.renderer.domElement);
 
         this.camera.position.set(50, 50, 50);
@@ -56,7 +78,7 @@ export class World {
             object.update(delta);
         }
 
-        this.renderer.render(this.scene, this.camera);
+        this.composer.render(this.scene, this.camera);
     }
 
     onWindowResize() {
