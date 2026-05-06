@@ -43,14 +43,14 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
                 flatShading: true,
             });
             const sandMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0xfefae0),
+                color: new THREE.Color().setHex(0x9c8463),
                 flatShading: true,
             });
 
 
-            const height = (noiseValue * elevationScale);
+            const height = (noiseValue * elevationScale) - 15;
             const geometry = new THREE.CylinderGeometry(size, size, height, 6);
-            const hex = new THREE.Mesh(geometry, noiseValue < 0.15 ? sandMaterial : grassMaterial);
+            const hex = new THREE.Mesh(geometry, height < 2 ? sandMaterial : grassMaterial);
             hex.castShadow = true;
             hex.receiveShadow = true;
 
