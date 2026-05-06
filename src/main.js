@@ -22,3 +22,4 @@ ocean.rotateX(-Math.PI / 2);
 ocean.position.set(0, 0.3, 0);
 world.add(ocean);
 
+world.scene.fog = new THREE.FogExp2(0xffffff, 0.002);
