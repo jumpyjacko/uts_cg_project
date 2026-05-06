@@ -26,7 +26,7 @@ export class World {
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.enableZoom = true;
         this.controls.minDistance = 50;
-        this.controls.maxDistance = 200;
+        this.controls.maxDistance = 150;
         this.controls.enableDamping = true;
         this.controls.dampingFactor = 0.1;
         this.controls.enablePan = false;
@@ -42,7 +42,7 @@ export class World {
         saoPass.params = {
 			output: 0,
 			saoBias: 0.5,
-			saoIntensity: 0.004,
+			saoIntensity: 0.006,
 			saoScale: 17,
 			saoKernelRadius: 50,
 			saoMinResolution: 0,
