@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
-import { setupPicking, setupRaycast, updateRaycast } from './picking.js';
+import { setupPicking, setupRaycast } from './picking.js';
 
 export class World {
     constructor(debug) {
@@ -65,7 +65,6 @@ export class World {
             this.scene.add(new THREE.AxesHelper(5));
         }
 
-
         setupPicking();
         this.raycast = setupRaycast(this);
     }
@@ -83,7 +82,6 @@ export class World {
             object.update(delta);
         }
 
-        updateRaycast(this.raycast.raycaster, this.raycast.mouse, this.raycast.marker, this);
         this.composer.render(this.scene, this.camera);
     }
 
@@ -91,6 +89,12 @@ export class World {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    remove(other) {
+        this.scene.remove(other);
+        other.geometry.dispose();
+        other.material.dispose();
     }
 
     add(other) {

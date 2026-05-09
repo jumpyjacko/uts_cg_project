@@ -34,23 +34,35 @@ export function setupRaycast(world) {
     window.addEventListener('mousemove', (event) => {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
         mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+        // raycaster.setFromCamera(mouse, world.camera);
+        // const intersects = raycaster.intersectObjects(world.scene.children, true);
+        //
+        // if (intersects.length > 0) {
+        //     const hit = intersects[0];
+        //
+        //     if (hit.object !== marker) {
+        //         marker.visible = true;
+        //         marker.position.copy(hit.point);
+        //     }
+        // } else {
+        //     marker.visible = false;
+        // }
     });
 
-    return {raycaster, mouse, marker};
-}
+    window.addEventListener('click', (event) => {
+        raycaster.setFromCamera(mouse, world.camera);
+        const intersects = raycaster.intersectObjects(world.scene.children, true);
 
-export function updateRaycast(raycaster, mouse, marker, world) {
-    raycaster.setFromCamera(mouse, world.camera);
-    const intersects = raycaster.intersectObjects(world.scene.children, true);
+        if (intersects.length > 0) {
+            const hit = intersects[0].object;
 
-    if (intersects.length > 0) {
-        const hit = intersects[0];
-        
-        if (hit.object !== marker) {
-            marker.visible = true;
-            marker.position.copy(hit.point);
+            let cell = hit.userData.parentCell;
+            if (!cell) return;
+
+            cell.addStructure(world);
         }
-    } else {
-        marker.visible = false;
-    }
+    })
+
+    return { raycaster, mouse, marker };
 }
