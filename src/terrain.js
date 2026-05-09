@@ -38,27 +38,34 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
 
             if (noiseValue === 0) continue;
 
-            const grassMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0x6a7a4a),
-                flatShading: true,
-            });
-            const sandMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0x9c8463),
-                flatShading: true,
-            });
-
-
             const height = (noiseValue * elevationScale) - 15;
-            const geometry = new THREE.CylinderGeometry(size, size, height, 6);
-            const hex = new THREE.Mesh(geometry, height < 2 ? sandMaterial : grassMaterial);
-            hex.castShadow = true;
-            hex.receiveShadow = true;
-
-            hex.position.set(finalX, height/2, finalZ);
-
-            terrain.add(hex);
+            const cell = new Cell(height, size, finalX, finalZ);
+            
+            terrain.add(cell.mesh);
         }
     }
 
     world.add(terrain);
 };
+
+class Cell {
+    constructor(height, size, x, z) {
+        const grassMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color().setHex(0x6a7a4a),
+            flatShading: true,
+        });
+        const sandMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color().setHex(0x9c8463),
+            flatShading: true,
+        });
+
+        const geometry = new THREE.CylinderGeometry(size, size, height, 6);
+        this.mesh = new THREE.Mesh(geometry, height < 2 ? sandMaterial : grassMaterial);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
+
+        this.mesh.position.set(x, height/2, z);
+
+        this.structure = null;
+    }
+}
