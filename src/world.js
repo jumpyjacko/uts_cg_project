@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
+import { setupPicking, setupRaycast } from './picking.js';
 
 export class World {
     constructor(debug) {
@@ -40,17 +41,17 @@ export class World {
         const saoPass = new SAOPass(this.scene, this.camera, true, true);
         this.composer.addPass(saoPass);
         saoPass.params = {
-			output: 0,
-			saoBias: 0.5,
-			saoIntensity: 0.006,
-			saoScale: 17,
-			saoKernelRadius: 50,
-			saoMinResolution: 0,
-			saoBlur: true,
-			saoBlurRadius: 2,
-			saoBlurStdDev: 4,
-			saoBlurDepthCutoff: 0.01
-		};
+            output: 0,
+            saoBias: 0.5,
+            saoIntensity: 0.006,
+            saoScale: 17,
+            saoKernelRadius: 50,
+            saoMinResolution: 0,
+            saoBlur: true,
+            saoBlurRadius: 2,
+            saoBlurStdDev: 4,
+            saoBlurDepthCutoff: 0.01
+        };
         // end post processing
 
         document.body.appendChild(this.renderer.domElement);
@@ -63,6 +64,9 @@ export class World {
         if (debug) {
             this.scene.add(new THREE.AxesHelper(5));
         }
+
+        setupPicking();
+        this.raycast = setupRaycast(this);
     }
 
     animate() {
@@ -85,6 +89,12 @@ export class World {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    remove(other) {
+        this.scene.remove(other);
+        other.geometry.dispose();
+        other.material.dispose();
     }
 
     add(other) {

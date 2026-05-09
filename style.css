@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+body {
+    margin: 0;
+}
+
+@layer components {
+    .dock-item {
+        @apply w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 transition-all
+               hover:border-0 hover:shadow-sm
+               active:border active:border-blue-200
+    }
+}

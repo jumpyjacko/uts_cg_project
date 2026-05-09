@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { Perlin } from './noise.js';
+import { pickingState } from './picking.js';
 
 export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const perlin = new Perlin();
@@ -38,27 +39,80 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
 
             if (noiseValue === 0) continue;
 
-            const grassMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0x6a7a4a),
-                flatShading: true,
-            });
-            const sandMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0x9c8463),
-                flatShading: true,
-            });
-
-
             const height = (noiseValue * elevationScale) - 15;
-            const geometry = new THREE.CylinderGeometry(size, size, height, 6);
-            const hex = new THREE.Mesh(geometry, height < 2 ? sandMaterial : grassMaterial);
-            hex.castShadow = true;
-            hex.receiveShadow = true;
-
-            hex.position.set(finalX, height/2, finalZ);
-
-            terrain.add(hex);
+            const cell = new Cell(height, size, finalX, finalZ);
+            
+            terrain.add(cell.mesh);
         }
     }
 
     world.add(terrain);
 };
+
+class Cell {
+    constructor(height, size, x, z) {
+        this.height = height;
+
+        const grassMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color().setHex(0x6a7a4a),
+            flatShading: true,
+        });
+        const sandMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color().setHex(0x9c8463),
+            flatShading: true,
+        });
+
+        const geometry = new THREE.CylinderGeometry(size, size, height, 6);
+        this.mesh = new THREE.Mesh(geometry, height < 2 ? sandMaterial : grassMaterial);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
+
+        this.mesh.position.set(x, height/2, z);
+
+        this.mesh.userData.parentCell = this;
+
+        this.structure = null;
+    }
+
+    removeStructure(world) {
+        if (this.structure) {
+            world.remove(this.structure);
+            this.structure = null;
+        }
+    }
+
+    addStructure(world) {
+        this.removeStructure(world);
+
+        const structHeight = 1.5;
+        const geometry = new THREE.BoxGeometry(1, structHeight, 1);
+        const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+        const mesh = new THREE.Mesh(geometry, material);
+
+        const posX = this.mesh.position.x;
+        const posZ = this.mesh.position.z;
+        const posY = this.height + (structHeight / 2);
+
+        mesh.position.set(posX, posY, posZ);
+        mesh.castShadow = true;
+
+        this.structure = mesh;
+        world.add(this.structure);
+    }
+
+    interactStructure(world) {
+        let interactType = pickingState.activeItem;
+
+        switch (interactType) {
+            case 'delete':
+                this.removeStructure(world);
+                break;
+            case 'tree':
+            case 'house':
+            case 'dock':
+                this.addStructure(world);
+                break;
+            default:
+        }
+    }
+}

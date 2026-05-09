@@ -1,13 +1,43 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="utf-8">
     <title>unknown title rn</title>
-    <style>
-      body { margin: 0; }
-    </style>
-  </head>
-  <body>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
     <script type="module" src="src/main.js"></script>
-  </body>
+
+    <div class="fixed inset-0 h-screen w-full pointer-events-none overflow-hidden select-none">
+        <div class="
+            absolute z-10 left-1/2 -translate-x-1/2 bottom-0
+
+            pointer-events-auto cursor-pointer
+            translate-y-[calc(100%-18px)]
+
+            hover:translate-y-0
+            transition-transform duration-300 ease-in-out
+
+            bg-white shadow-md w-72 rounded-t-2xl px-2 py-1.5
+            ">
+
+            <div class="absolute -top-10 left-0 w-full h-10 bg-transparent"></div>
+
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4">
+            </div>
+
+            <div class="flex flex-col items-center gap-2">
+                <div class="flex gap-4">
+                    <div data-action="tree" class="dock-item"></div>
+                    <div data-action="house" class="dock-item"></div>
+                    <div data-action="dock" class="dock-item"></div>
+                    <div data-action="delete" class="dock-item"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
 </html>
