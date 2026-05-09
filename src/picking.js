@@ -60,7 +60,7 @@ export function setupRaycast(world) {
             let cell = hit.userData.parentCell;
             if (!cell) return;
 
-            cell.addStructure(world);
+            cell.interactStructure(world);
         }
     })
 

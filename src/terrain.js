@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 
 import { Perlin } from './noise.js';
+import { pickingState } from './picking.js';
 
 export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const perlin = new Perlin();
@@ -97,5 +98,21 @@ class Cell {
 
         this.structure = mesh;
         world.add(this.structure);
+    }
+
+    interactStructure(world) {
+        let interactType = pickingState.activeItem;
+
+        switch (interactType) {
+            case 'delete':
+                this.removeStructure(world);
+                break;
+            case 'tree':
+            case 'house':
+            case 'dock':
+                this.addStructure(world);
+                break;
+            default:
+        }
     }
 }
