@@ -67,12 +67,26 @@ export class World {
 
         setupPicking();
         this.raycast = setupRaycast(this);
-
-        this.loadAssets();
     }
 
     async loadAssets() {
-        const gltfLoader = new GLTFLoader();
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+
+        const manager = new THREE.LoadingManager();
+        const gltfLoader = new GLTFLoader(manager);
+
+        manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+            const progress = (itemsLoaded / itemsTotal) * 100;
+            progressBar.style.width = progress + '%';
+        };
+
+        manager.onLoad = () => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 500);
+        };
 
         const treePaths = [
             "/models/tree1.glb",
