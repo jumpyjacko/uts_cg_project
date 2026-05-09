@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
+import { EffectComposer, GLTFLoader, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
 import { setupPicking, setupRaycast } from './picking.js';
 
 export class World {
@@ -69,6 +69,42 @@ export class World {
         this.raycast = setupRaycast(this);
     }
 
+    async loadAssets() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+
+        const manager = new THREE.LoadingManager();
+        const gltfLoader = new GLTFLoader(manager);
+
+        manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+            const progress = (itemsLoaded / itemsTotal) * 100;
+            progressBar.style.width = progress + '%';
+        };
+
+        manager.onLoad = () => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
+        };
+
+        const treePaths = [
+            "/models/tree1.glb",
+            "/models/tree2.glb",
+            "/models/tree3.glb",
+            "/models/tree4.glb"
+        ];
+        const loadedTrees = await Promise.all(
+            treePaths.map(path => gltfLoader.loadAsync(path))
+        );
+
+        this.assets = {
+            trees: loadedTrees.map(gltf => gltf.scene)
+        };
+
+        console.log("Loaded assets: ", this.assets);
+    }
+
     animate() {
         this.timer.update();
         this.controls.update();
@@ -93,8 +129,6 @@ export class World {
 
     remove(other) {
         this.scene.remove(other);
-        other.geometry.dispose();
-        other.material.dispose();
     }
 
     add(other) {
