@@ -10,7 +10,7 @@
 <body>
     <script type="module" src="src/main.js"></script>
 
-    <div class="fixed inset-0 h-screen w-full pointer-events-none overflow-hidden">
+    <div class="fixed inset-0 h-screen w-full pointer-events-none overflow-hidden select-none">
         <div class="
             absolute z-10 left-1/2 -translate-x-1/2 bottom-0
 
@@ -25,14 +25,14 @@
 
             <div class="absolute -top-10 left-0 w-full h-10 bg-transparent"></div>
 
-            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4 group-hover:bg-blue-400 transition-colors">
+            <div class="w-12 h-1.5 bg-gray-300 rounded-full mx-auto mb-4">
             </div>
 
             <div class="flex flex-col items-center gap-2">
                 <div class="flex gap-4">
-                    <div class="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200"></div>
-                    <div class="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200"></div>
-                    <div class="w-10 h-10 bg-gray-100 rounded-lg border border-gray-200"></div>
+                    <div data-action="tree" class="dock-item"></div>
+                    <div data-action="house" class="dock-item"></div>
+                    <div data-action="dock" class="dock-item"></div>
                 </div>
             </div>
         </div>
