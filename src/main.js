@@ -3,8 +3,11 @@ import * as THREE from 'three';
 import { World } from './world.js';
 import { terrain } from './terrain.js';
 import { Sky } from './sky.js';
+import { PickingUI } from './picking.js';
 
 let world = new World(true); // true is enabling some debug renderers
+
+let picking = new PickingUI();
 
 // setup lighting and sky
 let sky = new Sky();
