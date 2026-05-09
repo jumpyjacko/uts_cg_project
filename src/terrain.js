@@ -41,7 +41,7 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
 
             const height = (noiseValue * elevationScale) - 15;
             const cell = new Cell(height, size, finalX, finalZ);
-            
+
             terrain.add(cell.mesh);
         }
     }
@@ -67,7 +67,7 @@ class Cell {
         this.mesh.castShadow = true;
         this.mesh.receiveShadow = true;
 
-        this.mesh.position.set(x, height/2, z);
+        this.mesh.position.set(x, height / 2, z);
 
         this.mesh.userData.parentCell = this;
 
@@ -81,22 +81,35 @@ class Cell {
         }
     }
 
-    addStructure(world) {
+    addStructure(type, world) {
         this.removeStructure(world);
-
-        const structHeight = 1.5;
-        const geometry = new THREE.BoxGeometry(1, structHeight, 1);
-        const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
-        const mesh = new THREE.Mesh(geometry, material);
 
         const posX = this.mesh.position.x;
         const posZ = this.mesh.position.z;
-        const posY = this.height + (structHeight / 2);
+        const posY = this.height;
 
-        mesh.position.set(posX, posY, posZ);
-        mesh.castShadow = true;
+        let model;
+        switch (type) {
+            case 'tree':
+                const treeIndex = Math.floor(Math.random() * world.assets.trees.length);
+                const sourceModel = world.assets.trees[treeIndex];
+                model = sourceModel.clone();
+                break;
+            case 'house':
+            case 'dock':
+                break;
+            default:
+        }
 
-        this.structure = mesh;
+        model.position.set(posX, posY, posZ);
+        model.traverse((node) => {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+            }
+        });
+
+        this.structure = model;
         world.add(this.structure);
     }
 
@@ -110,7 +123,7 @@ class Cell {
             case 'tree':
             case 'house':
             case 'dock':
-                this.addStructure(world);
+                this.addStructure(interactType, world);
                 break;
             default:
         }
