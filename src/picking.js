@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+
 export const pickingState = new Proxy({
     activeItem: 'none',
 }, {
@@ -17,4 +19,38 @@ export function setupPicking() {
             console.log(`Action triggered: ${pickingState.activeItem}`);
         }
     })
+}
+
+export function setupRaycast(world) {
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    const markerGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+    const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+    marker.visible = false;
+    world.add(marker);
+
+    window.addEventListener('mousemove', (event) => {
+        mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+    });
+
+    return {raycaster, mouse, marker};
+}
+
+export function updateRaycast(raycaster, mouse, marker, world) {
+    raycaster.setFromCamera(mouse, world.camera);
+    const intersects = raycaster.intersectObjects(world.scene.children, true);
+
+    if (intersects.length > 0) {
+        const hit = intersects[0];
+        
+        if (hit.object !== marker) {
+            marker.visible = true;
+            marker.position.copy(hit.point);
+        }
+    } else {
+        marker.visible = false;
+    }
 }
