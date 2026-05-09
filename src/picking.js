@@ -50,17 +50,30 @@ export function setupRaycast(world) {
         // }
     });
 
-    window.addEventListener('click', (event) => {
-        raycaster.setFromCamera(mouse, world.camera);
-        const intersects = raycaster.intersectObjects(world.scene.children, true);
+    let mouseStartX = 0;
+    let mouseStartY = 0;
+    const moveThreshold = 5;
+    window.addEventListener('mousedown', (event) => {
+        mouseStartX = event.clientX;
+        mouseStartY = event.clientY;
+    });
 
-        if (intersects.length > 0) {
-            const hit = intersects[0].object;
+    window.addEventListener('mouseup', (event) => {
+        const deltaX = Math.abs(event.clientX - mouseStartX);
+        const deltaY = Math.abs(event.clientY - mouseStartY);
 
-            let cell = hit.userData.parentCell;
-            if (!cell) return;
+        if (deltaX < moveThreshold && deltaY < moveThreshold) {
+            raycaster.setFromCamera(mouse, world.camera);
+            const intersects = raycaster.intersectObjects(world.scene.children, true);
 
-            cell.interactStructure(world);
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+
+                let cell = hit.userData.parentCell;
+                if (!cell) return;
+
+                cell.interactStructure(world);
+            }
         }
     })
 
