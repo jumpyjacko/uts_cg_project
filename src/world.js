@@ -85,7 +85,7 @@ export class World {
             loadingScreen.style.opacity = '0';
             setTimeout(() => {
                 loadingScreen.style.display = 'none';
-            }, 500);
+            }, 1000);
         };
 
         const treePaths = [
