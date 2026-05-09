@@ -94,12 +94,15 @@ export class World {
             "/models/tree3.glb",
             "/models/tree4.glb"
         ];
-        const loadedTrees = await Promise.all(
-            treePaths.map(path => gltfLoader.loadAsync(path))
-        );
+        const [loadedTrees, bird] = await Promise.all([
+            Promise.all(treePaths.map(path => gltfLoader.loadAsync(path))),
+            gltfLoader.loadAsync("/models/bird.glb"),
+        ]);
+
 
         this.assets = {
-            trees: loadedTrees.map(gltf => gltf.scene)
+            trees: loadedTrees.map(gltf => gltf.scene),
+            bird: bird.scene,
         };
 
         console.log("Loaded assets: ", this.assets);
