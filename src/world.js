@@ -132,6 +132,11 @@ export class World {
 
     remove(other) {
         this.scene.remove(other);
+
+        const index = this.update_table.indexOf(other);
+        if (index !== -1) {
+            this.update_table.splice(index, 1);
+        }
     }
 
     add(other) {
