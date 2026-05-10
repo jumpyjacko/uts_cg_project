@@ -6,6 +6,16 @@ export const pickingState = new Proxy({
     set(target, property, value) {
         target[property] = value;
         console.log(`State changed: ${property} -> ${value}`);
+
+        if (property === 'activeItem') {
+            document.querySelectorAll("[data-action]").forEach((el) => {
+                if (el.dataset.action === value) {
+                    el.classList.add('outline-2', 'outline-offset-2', 'outline-blue-500');
+                } else {
+                    el.classList.remove('outline-2', 'outline-offset-2', 'outline-blue-500');
+                }
+            });
+        }
         return true;
     }
 });
