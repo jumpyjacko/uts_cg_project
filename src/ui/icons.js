@@ -31,7 +31,7 @@ document.querySelectorAll('.three-dock-item').forEach((el) => {
 
     switch (action) {
         case "tree":
-            loadModel("/models/tree1.glb", view);
+            loadModel("./models/tree1.glb", view);
         default:
     }
 });
