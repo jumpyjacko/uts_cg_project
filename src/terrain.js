@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { Perlin } from './noise.js';
 import { pickingState } from './picking.js';
 
+let lighthousePlaced = false;
+
 export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const perlin = new Perlin();
     const terrain = new THREE.Group();
@@ -47,6 +49,10 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
             }
             if (height > 4 && Math.random() < 0.01) {
                 cell.addStructure('house', world);
+            }
+            if (height > 9 && Math.random() < 0.8 && !lighthousePlaced) {
+                cell.addStructure('lighthouse', world);
+                lighthousePlaced = true;
             }
 
             terrain.add(cell.mesh);
