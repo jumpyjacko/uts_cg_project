@@ -96,10 +96,14 @@ class Cell {
         switch (type) {
             case 'tree':
                 const treeIndex = Math.floor(Math.random() * world.assets.trees.length);
-                const sourceModel = world.assets.trees[treeIndex];
-                model = sourceModel.clone();
+                const treeModel = world.assets.trees[treeIndex];
+                model = treeModel.clone();
                 break;
             case 'house':
+                const houseIndex = Math.floor(Math.random() * world.assets.houses.length);
+                const houseModel = world.assets.houses[houseIndex];
+                model = houseModel.clone();
+                break;
             case 'dock':
                 break;
             default:
