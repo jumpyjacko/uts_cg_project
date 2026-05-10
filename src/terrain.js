@@ -118,6 +118,8 @@ class Cell {
                 model = lighthouseModel.clone();
                 break;
             case 'dock':
+                const dockModel = world.assets.dock;
+                model = dockModel.clone();
                 break;
             default:
         }

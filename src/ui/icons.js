@@ -39,6 +39,9 @@ document.querySelectorAll('.three-dock-item').forEach((el) => {
         case 'lighthouse':
             loadModel("./models/lighthouse.glb", view);
             break;
+        case 'dock':
+            loadModel("./models/dock_example.glb", view);
+            break;
         default:
     }
 });

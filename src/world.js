@@ -100,10 +100,11 @@ export class World {
             "./models/house3.glb",
             "./models/house4.glb"
         ];
-        const [trees, houses, lighthouse, bird] = await Promise.all([
+        const [trees, houses, lighthouse, dock, bird] = await Promise.all([
             Promise.all(treePaths.map(path => gltfLoader.loadAsync(path))),
             Promise.all(housePaths.map(path => gltfLoader.loadAsync(path))),
             gltfLoader.loadAsync("./models/lighthouse.glb"),
+            gltfLoader.loadAsync("./models/dock.glb"),
             gltfLoader.loadAsync("./models/bird.glb"),
         ]);
 
@@ -111,6 +112,7 @@ export class World {
             trees: trees.map(gltf => gltf.scene),
             houses: houses.map(gltf => gltf.scene),
             lighthouse: lighthouse.scene,
+            dock: dock.scene,
             bird: bird.scene,
         };
 
