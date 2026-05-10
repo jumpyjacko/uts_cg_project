@@ -25,7 +25,7 @@ export function setupPicking() {
         const action = e.target.closest('[data-action]')?.dataset.action;
 
         if (action) {
-            pickingState.activeItem = action;
+            pickingState.activeItem = (pickingState.activeItem === action) ? null : action;
             console.log(`Action triggered: ${pickingState.activeItem}`);
         }
     })
