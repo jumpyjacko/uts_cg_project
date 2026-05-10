@@ -45,6 +45,9 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
             if (height > 3 && Math.random() < 0.4) {
                 cell.addStructure('tree', world);
             }
+            if (height > 4 && Math.random() < 0.01) {
+                cell.addStructure('house', world);
+            }
 
             terrain.add(cell.mesh);
         }
