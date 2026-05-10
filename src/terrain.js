@@ -107,6 +107,10 @@ class Cell {
                 const houseModel = world.assets.houses[houseIndex];
                 model = houseModel.clone();
                 break;
+            case 'lighthouse':
+                const lighthouseModel = world.assets.lighthouse;
+                model = lighthouseModel.clone();
+                break;
             case 'dock':
                 break;
             default:
@@ -133,6 +137,7 @@ class Cell {
                 break;
             case 'tree':
             case 'house':
+            case 'lighthouse':
             case 'dock':
                 this.addStructure(interactType, world);
                 break;
