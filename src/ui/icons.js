@@ -9,7 +9,7 @@ const loader = new GLTFLoader();
 
 const views = [];
 
-document.querySelectorAll('.dock-item').forEach((el) => {
+document.querySelectorAll('.three-dock-item').forEach((el) => {
     const action = el.dataset.action;
     const canvas = el.querySelector('canvas');
     const ctx = canvas.getContext('2d');
@@ -70,7 +70,7 @@ function loadModel(path, view) {
 
         view.scene.add(model);
         view.mesh = model;
-    })
+    });
 }
 
 animate();

@@ -6,7 +6,7 @@ body {
 
 @layer components {
     .dock-item {
-        @apply relative w-10 h-10 bg-gray-100 rounded-lg border border-gray-200 transition-all
+        @apply relative w-16 h-16 bg-gray-100 rounded-lg border border-gray-200 transition-all
                hover:border-0 hover:shadow-sm
                active:border active:border-blue-200
     }
