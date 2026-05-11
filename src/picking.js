@@ -5,7 +5,7 @@ export const pickingState = new Proxy({
 }, {
     set(target, property, value) {
         target[property] = value;
-        console.log(`State changed: ${property} -> ${value}`);
+        // console.log(`State changed: ${property} -> ${value}`);
 
         if (property === 'activeItem') {
             document.querySelectorAll("[data-action]").forEach((el) => {
@@ -26,7 +26,7 @@ export function setupPicking() {
 
         if (action) {
             pickingState.activeItem = (pickingState.activeItem === action) ? null : action;
-            console.log(`Action triggered: ${pickingState.activeItem}`);
+            // console.log(`Action triggered: ${pickingState.activeItem}`);
         }
     })
 }
