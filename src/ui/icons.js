@@ -30,8 +30,18 @@ document.querySelectorAll('.three-dock-item').forEach((el) => {
     views.push(view);
 
     switch (action) {
-        case "tree":
+        case 'tree':
             loadModel("./models/tree1.glb", view);
+            break;
+        case 'house':
+            loadModel("./models/house4.glb", view);
+            break;
+        case 'lighthouse':
+            loadModel("./models/lighthouse.glb", view);
+            break;
+        case 'dock':
+            loadModel("./models/dock_example.glb", view);
+            break;
         default:
     }
 });
