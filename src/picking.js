@@ -5,7 +5,7 @@ export const pickingState = new Proxy({
 }, {
     set(target, property, value) {
         target[property] = value;
-        console.log(`State changed: ${property} -> ${value}`);
+        // console.log(`State changed: ${property} -> ${value}`);
 
         if (property === 'activeItem') {
             document.querySelectorAll("[data-action]").forEach((el) => {
@@ -26,7 +26,7 @@ export function setupPicking() {
 
         if (action) {
             pickingState.activeItem = (pickingState.activeItem === action) ? null : action;
-            console.log(`Action triggered: ${pickingState.activeItem}`);
+            // console.log(`Action triggered: ${pickingState.activeItem}`);
         }
     })
 }
@@ -69,6 +69,10 @@ export function setupRaycast(world) {
     });
 
     window.addEventListener('mouseup', (event) => {
+        if (event.target.id !== 'main-view') {
+            return;
+        }
+
         const deltaX = Math.abs(event.clientX - mouseStartX);
         const deltaY = Math.abs(event.clientY - mouseStartY);
 
@@ -85,7 +89,23 @@ export function setupRaycast(world) {
                 cell.interactStructure(world);
             }
         }
-    })
+    });
+
+    window.addEventListener('keydown', (event) => {
+        if (event.key === "r") {
+            raycaster.setFromCamera(mouse, world.camera);
+            const intersects = raycaster.intersectObjects(world.scene.children, true);
+
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+
+                let cell = hit.userData.parentCell;
+                if (!cell) return;
+
+                cell.rotateStructure();
+            }
+        }
+    });
 
     return { raycaster, mouse, marker };
 }

@@ -55,6 +55,13 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
                 lighthousePlaced = true;
             }
 
+            if (cell.structure) {
+                let rotateAmount = Math.floor(Math.random() * 6);
+                for (let i = 0; i < rotateAmount; i++) {
+                    cell.rotateStructure();
+                }
+            }
+
             terrain.add(cell.mesh);
         }
     }
@@ -126,6 +133,7 @@ class Cell {
 
         model.position.set(posX, posY, posZ);
         model.traverse((node) => {
+            node.userData.parentCell = this;
             if (node.isMesh) {
                 node.castShadow = true;
                 node.receiveShadow = true;
@@ -151,5 +159,10 @@ class Cell {
                 break;
             default:
         }
+    }
+
+    rotateStructure() {
+        if (!this.structure) return;
+        this.structure.rotateY(Math.PI / 3);
     }
 }
