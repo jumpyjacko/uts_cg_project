@@ -85,7 +85,23 @@ export function setupRaycast(world) {
                 cell.interactStructure(world);
             }
         }
-    })
+    });
+
+    window.addEventListener('keydown', (event) => {
+        if (event.key === "r") {
+            raycaster.setFromCamera(mouse, world.camera);
+            const intersects = raycaster.intersectObjects(world.scene.children, true);
+
+            if (intersects.length > 0) {
+                const hit = intersects[0].object;
+
+                let cell = hit.userData.parentCell;
+                if (!cell) return;
+
+                cell.rotateStructure();
+            }
+        }
+    });
 
     return { raycaster, mouse, marker };
 }

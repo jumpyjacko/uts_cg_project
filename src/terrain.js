@@ -152,4 +152,9 @@ class Cell {
             default:
         }
     }
+
+    rotateStructure() {
+        if (!this.structure) return;
+        this.structure.rotateY(Math.PI / 3);
+    }
 }
