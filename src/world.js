@@ -55,6 +55,7 @@ export class World {
         // end post processing
 
         document.body.appendChild(this.renderer.domElement);
+        this.renderer.domElement.id = "main-view";
 
         this.camera.position.set(50, 50, 50);
         this.camera.lookAt(0, 0, 0);

@@ -69,6 +69,10 @@ export function setupRaycast(world) {
     });
 
     window.addEventListener('mouseup', (event) => {
+        if (event.target.id !== 'main-view') {
+            return;
+        }
+
         const deltaX = Math.abs(event.clientX - mouseStartX);
         const deltaY = Math.abs(event.clientY - mouseStartY);
 
