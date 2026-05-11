@@ -133,6 +133,7 @@ class Cell {
 
         model.position.set(posX, posY, posZ);
         model.traverse((node) => {
+            node.userData.parentCell = this;
             if (node.isMesh) {
                 node.castShadow = true;
                 node.receiveShadow = true;
