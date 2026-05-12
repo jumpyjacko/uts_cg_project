@@ -17,7 +17,7 @@ export class World {
 
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 4000);
 
-        this.renderer = new THREE.WebGLRenderer({ antialias: true });
+        this.renderer = new THREE.WebGLRenderer({ antialias: false });
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setAnimationLoop(() => this.animate());
@@ -45,15 +45,12 @@ export class World {
         saoPass.resolution = resolution;
         saoPass.params = {
             output: 0,
-            saoBias: 0.5,
+            saoBias: 0.9,
             saoIntensity: 0.006,
-            saoScale: 17,
-            saoKernelRadius: 50,
+            saoScale: 20,
+            saoKernelRadius: 8,
             saoMinResolution: 0,
-            saoBlur: true,
-            saoBlurRadius: 2,
-            saoBlurStdDev: 4,
-            saoBlurDepthCutoff: 0.01
+            saoBlur: false,
         };
         this.passes.push({ id: "ao", pass: saoPass, enabled: true });
 
