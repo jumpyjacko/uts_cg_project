@@ -8,6 +8,13 @@ export function setupRenderPassList(world) {
             if (target) {
                 target.enabled = !target.enabled;
             }
+
+            if (!target.enabled) {
+                e.target.classList.add("line-through", "text-gray-400");
+            } else {
+                e.target.classList.remove("line-through", "text-gray-400");
+            }
+
             world.updateRenderPasses(world.passes);
         }
     })
