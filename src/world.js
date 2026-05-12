@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { EffectComposer, GLTFLoader, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
 import { setupPicking, setupRaycast } from './picking.js';
-import { ReactiveArray } from './tools/reactiveArray.js';
+import { setupRenderPassList } from './ui/list.js';
 
 export class World {
     constructor(debug) {
@@ -39,7 +39,7 @@ export class World {
         this.renderPass = new RenderPass(this.scene, this.camera);
         this.composer.addPass(this.renderPass);
 
-        this.passes = new ReactiveArray((arr) => this.updateRenderPasses(arr));
+        this.passes = [];
         const saoPass = new SAOPass(this.scene, this.camera, true, true);
         saoPass.params = {
             output: 0,
@@ -53,7 +53,9 @@ export class World {
             saoBlurStdDev: 4,
             saoBlurDepthCutoff: 0.01
         };
-        this.passes.push(saoPass);
+        this.passes.push({ id: "ao", pass: saoPass, enabled: true });
+        this.updateRenderPasses(this.passes);
+        setupRenderPassList(this);
         // end post processing
 
         document.body.appendChild(this.renderer.domElement);
@@ -170,7 +172,8 @@ export class World {
         this.composer = new EffectComposer(this.renderer);
         this.composer.addPass(this.renderPass);
 
-        for (const pass of passes) {
+        for (const { pass, enabled } of passes) {
+            if (!enabled) continue;
             this.composer.addPass(pass);
         }
     }
