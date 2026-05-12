@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer, GLTFLoader, RenderPass, SAOPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
+import { EffectComposer, GLTFLoader, RenderPass, SAOPass, SMAAPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
 import { setupPicking, setupRaycast } from './picking.js';
 import { setupRenderPassList } from './ui/list.js';
 
@@ -17,7 +17,7 @@ export class World {
 
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 4000);
 
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({ antialias: false });
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setAnimationLoop(() => this.animate());
@@ -40,24 +40,25 @@ export class World {
         this.composer.addPass(this.renderPass);
 
         this.passes = [];
+        const resolution = new THREE.Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
         const saoPass = new SAOPass(this.scene, this.camera, true, true);
+        saoPass.resolution = resolution;
         saoPass.params = {
             output: 0,
-            saoBias: 0.5,
+            saoBias: 0.9,
             saoIntensity: 0.006,
-            saoScale: 17,
-            saoKernelRadius: 50,
+            saoScale: 20,
+            saoKernelRadius: 8,
             saoMinResolution: 0,
-            saoBlur: true,
-            saoBlurRadius: 2,
-            saoBlurStdDev: 4,
-            saoBlurDepthCutoff: 0.01
+            saoBlur: false,
         };
         this.passes.push({ id: "ao", pass: saoPass, enabled: true });
 
-        const resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
         const bloomPass = new UnrealBloomPass(resolution, 0.067, 0.8, 0.95);
         this.passes.push({ id: "bloom", pass: bloomPass, enabled: true });
+
+        const smaaPass = new SMAAPass();
+        this.passes.push({ id: "smaa", pass: smaaPass, enabled: true });
 
         this.updateRenderPasses(this.passes);
         setupRenderPassList(this);
