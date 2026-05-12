@@ -1,8 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer, GLTFLoader, RenderPass, SAOPass, SMAAPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
+import { EffectComposer, GLTFLoader, RenderPass, SAOPass, ShaderPass, SMAAPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
 import { setupPicking, setupRaycast } from './picking.js';
 import { setupRenderPassList } from './ui/list.js';
+
+import edgeVertShader from './shaders/edgeDetect.vert?raw';
+import edgeAFragShader from './shaders/edgeDetectAlpha.frag?raw';
+import edgeBFragShader from './shaders/edgeDetectBeta.frag?raw';
 
 export class World {
     constructor(debug) {
@@ -40,7 +44,49 @@ export class World {
         this.composer.addPass(this.renderPass);
 
         this.passes = [];
+        this.normalTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
+
+        const depthTexture = new THREE.DepthTexture();
+        this.composer.renderTarget1.depthBuffer = true;
+        this.composer.renderTarget1.depthTexture = depthTexture;
+
         const resolution = new THREE.Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
+        let edgeADetectionShader = {
+            uniforms: {
+                'tDiffuse': { value: 1.0 },
+                'resolution': { value: new THREE.Vector2() },
+                'outlineColor': { value: new THREE.Color(0x000000) },
+                'outlineThickness': { value: 0.1 },
+                'tDepth': { value: null },
+                'tNormal': { value: null },
+            },
+            vertexShader: edgeVertShader,
+            fragmentShader: edgeAFragShader,
+        }
+        const edgeAPass = new ShaderPass(edgeADetectionShader);
+        edgeAPass.uniforms['resolution'].value.set(window.innerWidth, window.innerHeight);
+        edgeAPass.uniforms['tDepth'].value = depthTexture;
+        edgeAPass.uniforms['tNormal'].value = this.normalTarget.texture;
+        this.passes.push({ id: "edge-a", pass: edgeAPass, enabled: false });
+
+        let edgeBDetectionShader = {
+            uniforms: {
+                'tDiffuse': { value: 1.0 },
+                'resolution': { value: new THREE.Vector2() },
+                'outlineColor': { value: new THREE.Color(0x000000) },
+                'outlineThickness': { value: 0.1 },
+                'tDepth': { value: null },
+                'tNormal': { value: null },
+            },
+            vertexShader: edgeVertShader,
+            fragmentShader: edgeBFragShader,
+        }
+        const edgeBPass = new ShaderPass(edgeBDetectionShader);
+        edgeBPass.uniforms['resolution'].value.set(window.innerWidth, window.innerHeight);
+        edgeBPass.uniforms['tDepth'].value = depthTexture;
+        edgeBPass.uniforms['tNormal'].value = this.normalTarget.texture;
+        this.passes.push({ id: "edge-b", pass: edgeBPass, enabled: true });
+
         const saoPass = new SAOPass(this.scene, this.camera, true, true);
         saoPass.resolution = resolution;
         saoPass.params = {
@@ -143,6 +189,14 @@ export class World {
             object.update(delta);
         }
 
+        // prepass
+        this.scene.overrideMaterial = new THREE.MeshNormalMaterial();
+        this.renderer.setRenderTarget(this.normalTarget);
+        this.renderer.render(this.scene, this.camera);
+
+        // final
+        this.scene.overrideMaterial = null;
+        this.renderer.setRenderTarget(null);
         this.composer.render(this.scene, this.camera);
     }
 
