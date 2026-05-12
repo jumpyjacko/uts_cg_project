@@ -12,6 +12,7 @@ export class Ocean {
             },
             vertexShader: oceanvert,
             fragmentShader: oceanfarg,
+            transparent:false
         });
         const loader = new THREE.TextureLoader();
             loader.load(texture, (texture) => {
@@ -20,7 +21,7 @@ export class Ocean {
             this.mat.uniforms.uMap.value = texture;
         });
 
-        const geo = new THREE.PlaneGeometry(500, 500, 64,64);
+        const geo = new THREE.PlaneGeometry(500, 500, 500,500 );
         this.mesh = new THREE.Mesh(geo, this.mat);
         this.mesh.rotateX(-Math.PI / 2);
         this.mesh.position.set(0, 0, 0);
