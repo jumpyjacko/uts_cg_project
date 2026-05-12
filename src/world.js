@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer, GLTFLoader, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
+import { EffectComposer, GLTFLoader, RenderPass, SAOPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
 import { setupPicking, setupRaycast } from './picking.js';
 import { setupRenderPassList } from './ui/list.js';
 
@@ -54,6 +54,11 @@ export class World {
             saoBlurDepthCutoff: 0.01
         };
         this.passes.push({ id: "ao", pass: saoPass, enabled: true });
+
+        const resolution = new THREE.Vector2(window.innerWidth, window.innerHeight);
+        const bloomPass = new UnrealBloomPass(resolution, 0.067, 0.8, 0.95);
+        this.passes.push({ id: "bloom", pass: bloomPass, enabled: true });
+
         this.updateRenderPasses(this.passes);
         setupRenderPassList(this);
         // end post processing
