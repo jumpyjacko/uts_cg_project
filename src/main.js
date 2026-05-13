@@ -5,7 +5,7 @@ import { terrain } from './terrain.js';
 import { Sky } from './sky.js';
 import { Clouds } from './clouds.js';
 
-let world = new World(true); // true is enabling some debug renderers
+let world = new World(false); // true is enabling some debug renderers
 await world.loadAssets();
 
 // setup lighting and sky

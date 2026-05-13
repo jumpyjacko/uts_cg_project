@@ -20,8 +20,8 @@ export class Sky {
         this.hemiLight.position.set(0, 75, 0);
         this.group.add(this.hemiLight);
 
-        const hemiLightHelper = new THREE.HemisphereLightHelper(this.hemiLight, 10); // debug
-        this.group.add(hemiLightHelper);
+        // const hemiLightHelper = new THREE.HemisphereLightHelper(this.hemiLight, 10); // debug
+        // this.group.add(hemiLightHelper);
 
         this.pivot = new THREE.Object3D();
         this.sun = new THREE.DirectionalLight(0xFFeaea);
@@ -41,8 +41,8 @@ export class Sky {
         this.sun.shadow.camera.far = 500;
         this.sun.shadow.bias = -0.00;
 
-        this.dirLightHelper = new THREE.DirectionalLightHelper(this.sun, 10); // debug
-        this.group.add(this.dirLightHelper);
+        // this.dirLightHelper = new THREE.DirectionalLightHelper(this.sun, 10); // debug
+        // this.group.add(this.dirLightHelper);
 
         // skydome
         this.skyUniforms = {
