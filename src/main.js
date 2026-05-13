@@ -3,6 +3,7 @@ import * as THREE from 'three';
 import { World } from './world.js';
 import { terrain } from './terrain.js';
 import { Sky } from './sky.js';
+import { Clouds } from './clouds.js';
 
 let world = new World(true); // true is enabling some debug renderers
 await world.loadAssets();
@@ -11,6 +12,11 @@ await world.loadAssets();
 let sky = new Sky();
 world.add(sky.group);
 world.addToUpdateTable(sky);
+
+//cloud setup
+let clouds = new Clouds();
+world.add(clouds.group);
+world.addToUpdateTable(clouds);
 
 // Island terrain
 terrain(world);

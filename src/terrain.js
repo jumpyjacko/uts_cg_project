@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import { Perlin } from './noise.js';
 import { pickingState } from './picking.js';
 
+let lighthousePlaced = false;
+
 export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const perlin = new Perlin();
     const terrain = new THREE.Group();
@@ -44,6 +46,20 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
 
             if (height > 3 && Math.random() < 0.4) {
                 cell.addStructure('tree', world);
+            }
+            if (height > 4 && Math.random() < 0.01) {
+                cell.addStructure('house', world);
+            }
+            if (height > 9 && Math.random() < 0.8 && !lighthousePlaced) {
+                cell.addStructure('lighthouse', world);
+                lighthousePlaced = true;
+            }
+
+            if (cell.structure) {
+                let rotateAmount = Math.floor(Math.random() * 6);
+                for (let i = 0; i < rotateAmount; i++) {
+                    cell.rotateStructure();
+                }
             }
 
             terrain.add(cell.mesh);
@@ -96,17 +112,28 @@ class Cell {
         switch (type) {
             case 'tree':
                 const treeIndex = Math.floor(Math.random() * world.assets.trees.length);
-                const sourceModel = world.assets.trees[treeIndex];
-                model = sourceModel.clone();
+                const treeModel = world.assets.trees[treeIndex];
+                model = treeModel.clone();
                 break;
             case 'house':
+                const houseIndex = Math.floor(Math.random() * world.assets.houses.length);
+                const houseModel = world.assets.houses[houseIndex];
+                model = houseModel.clone();
+                break;
+            case 'lighthouse':
+                const lighthouseModel = world.assets.lighthouse;
+                model = lighthouseModel.clone();
+                break;
             case 'dock':
+                const dockModel = world.assets.dock;
+                model = dockModel.clone();
                 break;
             default:
         }
 
         model.position.set(posX, posY, posZ);
         model.traverse((node) => {
+            node.userData.parentCell = this;
             if (node.isMesh) {
                 node.castShadow = true;
                 node.receiveShadow = true;
@@ -126,10 +153,16 @@ class Cell {
                 break;
             case 'tree':
             case 'house':
+            case 'lighthouse':
             case 'dock':
                 this.addStructure(interactType, world);
                 break;
             default:
         }
+    }
+
+    rotateStructure() {
+        if (!this.structure) return;
+        this.structure.rotateY(Math.PI / 3);
     }
 }
