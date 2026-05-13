@@ -31,12 +31,12 @@ world.add(ocean);
 
 world.scene.fog = new THREE.FogExp2(0xffffff, 0.002);
 
-let birdModel = world.assets.bird.clone() // <- this is where the bird model is stored
-birdModel.position.y = 20; // e.g. work with bird as if it were any other THREEjs mesh
+//let birdModel = world.assets.bird.clone() // <- this is where the bird model is stored
+//birdModel.position.y = 20; // e.g. work with bird as if it were any other THREEjs mesh
 
-birdModel.update = (delta) => {
+//birdModel.update = (delta) => {
   // stuff to animate bird here, gets called every frame
-  birdModel.position.z += 1 * delta;
-}
-world.add(birdModel);
-world.addToUpdateTable(birdModel);
+  //birdModel.position.z += 1 * delta;
+//}
+//world.add(birdModel);
+//world.addToUpdateTable(birdModel);
