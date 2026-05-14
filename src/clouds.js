@@ -93,7 +93,7 @@ export class Clouds {
         this.group.rotation.y += 0.008 * delta * 10;
 
         // subtle individual bob per cloud
-        const t = performance.now() * 0.1;
+        const t = performance.now() / 100;
         this.clouds.forEach(cloud => {
             cloud.position.y += Math.sin(t * cloud.userData.driftSpeed + cloud.userData.driftOffset) * 0.05;
         });
