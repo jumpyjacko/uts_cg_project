@@ -9,7 +9,7 @@ const BIRD_CONFIG = {
     minSpeed: 8,
     maxSpeed: 18,
     scale: 2,
-    minSpawnDelya: 1,
+    minSpawnDelay: 1,
     maxSpawnDelay: 3,
     maxLife: 25,
     bobStrength: 0.02,
@@ -48,6 +48,58 @@ export class Birds {
         } else {
             x = THREE.MathUtils.randFloatSpread(radius * 2);
             z = radius;
+        }
+
+        bird.position.set(
+            x,
+            THREE.MathUtils.randFloat(BIRD_CONFIG.minHeight, BIRD_CONFIG.maxHeight),
+            z
+        );
+
+        const target = new THREE.Vector3(
+            THREE.MathUtils.randFloatSpread(radius),
+            THREE.MathUtils.randFloat(BIRD_CONFIG.minHeight, BIRD_CONFIG.maxHeight),
+            THREE.MathUtils.randFloatSpread(radius)
+        );
+
+        const direction = target.sub(bird.position).normalize();
+
+        bird.userData.velocity = direction;
+        bird.userData.speed = THREE.MathUtils.randFloat(
+            BIRD_CONFIG.minSpeed,
+            BIRD_CONFIG.maxSpeed
+        );
+        bird.userData.life = 0;
+        bird.userData.bobOffset = Math.random() * Math.PI * 2;
+
+        bird.lookAt(
+            bird.position.x + direction.x,
+            bird.position.y + direction.y,
+            bird.position.z + direction.z
+        );
+
+        bird.scale.setScalar(BIRD_CONFIG.scale);
+        bird.traverse((node) => {
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+            }
+        });
+
+        this.group.add(bird);
+        this.birds.push(bird);
+    }
+
+    update(delta) {
+        this.spawnTimer += delta
+
+        if (this.spawnTimer >= this.spawnDelay && this.birds.length < BIRD_CONFIG.maxBirds) {
+            this.spawnBird();
+            this.spawnTimer = 0;
+            this.spawnDelay = THREE.MathUtils.randFloat(
+                BIRD_CONFIG.minSpawnDelay,
+                BIRD_CONFIG.maxSpawnDelay
+            );
         }
     }
 }
