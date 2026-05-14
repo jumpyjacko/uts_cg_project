@@ -4,6 +4,7 @@ import { World } from './world.js';
 import { terrain } from './terrain.js';
 import { Sky } from './sky.js';
 import { Clouds } from './clouds.js';
+import { Birds } from './birds.js';
 
 let world = new World(true); // true is enabling some debug renderers
 await world.loadAssets();
@@ -40,3 +41,7 @@ world.scene.fog = new THREE.FogExp2(0xffffff, 0.002);
 //}
 //world.add(birdModel);
 //world.addToUpdateTable(birdModel);
+
+let birds = new Birds(world);
+world.add(birds.group);
+world.addToUpdateTable(birds);
