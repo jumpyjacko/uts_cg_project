@@ -12,7 +12,7 @@ export class Ocean {
             },
             vertexShader: oceanvert,
             fragmentShader: oceanfarg,
-            transparent:false
+            transparent:true
         });
         const loader = new THREE.TextureLoader();
             loader.load(texture, (texture) => {

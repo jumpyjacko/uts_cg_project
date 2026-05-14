@@ -13,5 +13,9 @@ void main() {
     vec4 tex1 = texture2D(uMap, uv);
     vec4 tex2 = texture2D(uMap, uv + vec2(0.2));
 
-    gl_FragColor = vec4(uColor + vec3(tex1.a * 0.9 - tex2.a * 0.02), 1.0);
+    float islandMask = smoothstep(35.0, 55.0, length((vUv - 0.5) * 500.0));
+    vec3 oceanColor = uColor + vec3(tex1.a * 0.9 - tex2.a * 0.02);
+    vec3 pondColor = uColor;
+
+    gl_FragColor = vec4(mix(pondColor, oceanColor, islandMask), 1.0);
 }

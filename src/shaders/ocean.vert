@@ -13,6 +13,6 @@ void main() {
     vUv = uv;
     vec3 pos = position;
     pos.z += calculateSurface(pos.x, pos.z) * 1.5 * smoothstep(60.0, 90.0, length(vec2(pos.x, pos.y)));    
-    pos.z = max(pos.z, 0.0);
+    pos.z = max(pos.z, 0.0) * 1.2;
     gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
 }
