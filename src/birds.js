@@ -101,5 +101,20 @@ export class Birds {
                 BIRD_CONFIG.maxSpawnDelay
             );
         }
+
+        for (let i = this.birds.length - 1; i >= 0; i--) {
+            const bird = this.birds[i];
+            bird.position.addScaledVector(
+                bird.userData.velocity,
+                bird.userData.speed * delta
+            );
+
+            bird.position.y += Math.sin(Date.now() * BIRD_CONFIG.bobSpeed + bird.userData.bobOffset) * BIRD_CONFIG.bobStrength;
+            bird.userData.life += delta;
+            if (bird.userData.life > BIRD_CONFIG.maxLife || Math.abs(bird.position.x) > BIRD_CONFIG.despawnRadius || Math.abs(bird.position.z) > BIRD_CONFIG.despawnRadius) {
+                this.group.remove(bird);
+                this.birds.splice(i, 1);
+            }
+        }
     }
 }
