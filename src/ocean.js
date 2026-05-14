@@ -8,7 +8,7 @@ export class Ocean {
         this.mat = new THREE.ShaderMaterial({
             uniforms:{uMap:{value: null},
                 uTime:{value: 0},
-                uColor:{value:new THREE.Color('#0065af')},
+                uColor:{value:new THREE.Color('#4682b4')},
             },
             vertexShader: oceanvert,
             fragmentShader: oceanfarg,
