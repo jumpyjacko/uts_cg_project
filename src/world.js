@@ -1,6 +1,12 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-import { EffectComposer, RenderPass, SAOPass } from 'three/examples/jsm/Addons.js';
+import { EffectComposer, GLTFLoader, RenderPass, SAOPass, ShaderPass, SMAAPass, UnrealBloomPass } from 'three/examples/jsm/Addons.js';
+import { setupPicking, setupRaycast } from './picking.js';
+import { setupRenderPassList } from './ui/list.js';
+
+import edgeVertShader from './shaders/edgeDetect.vert?raw';
+import edgeAFragShader from './shaders/edgeDetectAlpha.frag?raw';
+import edgeBFragShader from './shaders/edgeDetectBeta.frag?raw';
 
 export class World {
     constructor(debug) {
@@ -15,7 +21,7 @@ export class World {
 
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 4000);
 
-        this.renderer = new THREE.WebGLRenderer();
+        this.renderer = new THREE.WebGLRenderer({ antialias: false });
         this.renderer.setPixelRatio(window.devicePixelRatio);
         this.renderer.setSize(window.innerWidth, window.innerHeight);
         this.renderer.setAnimationLoop(() => this.animate());
@@ -34,26 +40,78 @@ export class World {
 
         // init post processing
         this.composer = new EffectComposer(this.renderer);
-        const renderPass = new RenderPass(this.scene, this.camera);
-        this.composer.addPass(renderPass);
+        this.renderPass = new RenderPass(this.scene, this.camera);
+        this.composer.addPass(this.renderPass);
+
+        this.passes = [];
+        this.normalTarget = new THREE.WebGLRenderTarget(window.innerWidth, window.innerHeight);
+
+        const depthTexture = new THREE.DepthTexture();
+        this.composer.renderTarget1.depthBuffer = true;
+        this.composer.renderTarget1.depthTexture = depthTexture;
+
+        const resolution = new THREE.Vector2(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio);
+        let edgeADetectionShader = {
+            uniforms: {
+                'tDiffuse': { value: 1.0 },
+                'resolution': { value: new THREE.Vector2() },
+                'outlineColor': { value: new THREE.Color(0x000000) },
+                'outlineThickness': { value: 0.1 },
+                'tDepth': { value: null },
+                'tNormal': { value: null },
+            },
+            vertexShader: edgeVertShader,
+            fragmentShader: edgeAFragShader,
+        }
+        const edgeAPass = new ShaderPass(edgeADetectionShader);
+        edgeAPass.uniforms['resolution'].value.set(window.innerWidth, window.innerHeight);
+        edgeAPass.uniforms['tDepth'].value = depthTexture;
+        edgeAPass.uniforms['tNormal'].value = this.normalTarget.texture;
+        this.passes.push({ id: "edge-a", pass: edgeAPass, enabled: false });
+
+        let edgeBDetectionShader = {
+            uniforms: {
+                'tDiffuse': { value: 1.0 },
+                'resolution': { value: new THREE.Vector2() },
+                'outlineColor': { value: new THREE.Color(0x000000) },
+                'outlineThickness': { value: 0.1 },
+                'tDepth': { value: null },
+                'tNormal': { value: null },
+            },
+            vertexShader: edgeVertShader,
+            fragmentShader: edgeBFragShader,
+        }
+        const edgeBPass = new ShaderPass(edgeBDetectionShader);
+        edgeBPass.uniforms['resolution'].value.set(window.innerWidth, window.innerHeight);
+        edgeBPass.uniforms['tDepth'].value = depthTexture;
+        edgeBPass.uniforms['tNormal'].value = this.normalTarget.texture;
+        this.passes.push({ id: "edge-b", pass: edgeBPass, enabled: true });
 
         const saoPass = new SAOPass(this.scene, this.camera, true, true);
-        this.composer.addPass(saoPass);
+        saoPass.resolution = resolution;
         saoPass.params = {
-			output: 0,
-			saoBias: 0.5,
-			saoIntensity: 0.006,
-			saoScale: 17,
-			saoKernelRadius: 50,
-			saoMinResolution: 0,
-			saoBlur: true,
-			saoBlurRadius: 2,
-			saoBlurStdDev: 4,
-			saoBlurDepthCutoff: 0.01
-		};
+            output: 0,
+            saoBias: 0.9,
+            saoIntensity: 0.006,
+            saoScale: 20,
+            saoKernelRadius: 8,
+            saoMinResolution: 0,
+            saoBlur: false,
+        };
+        this.passes.push({ id: "ao", pass: saoPass, enabled: true });
+
+        const bloomPass = new UnrealBloomPass(resolution, 0.067, 0.8, 0.95);
+        this.passes.push({ id: "bloom", pass: bloomPass, enabled: true });
+
+        const smaaPass = new SMAAPass();
+        this.passes.push({ id: "smaa", pass: smaaPass, enabled: true });
+
+        this.updateRenderPasses(this.passes);
+        setupRenderPassList(this);
         // end post processing
 
         document.body.appendChild(this.renderer.domElement);
+        this.renderer.domElement.id = "main-view";
 
         this.camera.position.set(50, 50, 50);
         this.camera.lookAt(0, 0, 0);
@@ -63,6 +121,59 @@ export class World {
         if (debug) {
             this.scene.add(new THREE.AxesHelper(5));
         }
+
+        setupPicking();
+        this.raycast = setupRaycast(this);
+    }
+
+    async loadAssets() {
+        const loadingScreen = document.getElementById('loading-screen');
+        const progressBar = document.getElementById('progress-bar');
+
+        const manager = new THREE.LoadingManager();
+        const gltfLoader = new GLTFLoader(manager);
+
+        manager.onProgress = (url, itemsLoaded, itemsTotal) => {
+            const progress = (itemsLoaded / itemsTotal) * 100;
+            progressBar.style.width = progress + '%';
+        };
+
+        manager.onLoad = () => {
+            loadingScreen.style.opacity = '0';
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1000);
+        };
+
+        const treePaths = [
+            "./models/tree1.glb",
+            "./models/tree2.glb",
+            "./models/tree3.glb",
+            "./models/tree4.glb"
+        ];
+        const housePaths = [
+            "./models/house1.glb",
+            "./models/house2.glb",
+            "./models/house3.glb",
+            "./models/house4.glb"
+        ];
+        const [trees, houses, lighthouse, dock, bird] = await Promise.all([
+            Promise.all(treePaths.map(path => gltfLoader.loadAsync(path))),
+            Promise.all(housePaths.map(path => gltfLoader.loadAsync(path))),
+            gltfLoader.loadAsync("./models/lighthouse.glb"),
+            gltfLoader.loadAsync("./models/dock.glb"),
+            gltfLoader.loadAsync("./models/bird.glb"),
+        ]);
+
+        this.assets = {
+            trees: trees.map(gltf => gltf.scene),
+            houses: houses.map(gltf => gltf.scene),
+            lighthouse: lighthouse.scene,
+            dock: dock.scene,
+            bird: bird.scene,
+        };
+
+        console.log("Loaded assets: ", this.assets);
     }
 
     animate() {
@@ -78,6 +189,14 @@ export class World {
             object.update(delta);
         }
 
+        // prepass
+        this.scene.overrideMaterial = new THREE.MeshNormalMaterial();
+        this.renderer.setRenderTarget(this.normalTarget);
+        this.renderer.render(this.scene, this.camera);
+
+        // final
+        this.scene.overrideMaterial = null;
+        this.renderer.setRenderTarget(null);
         this.composer.render(this.scene, this.camera);
     }
 
@@ -85,6 +204,15 @@ export class World {
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+    }
+
+    remove(other) {
+        this.scene.remove(other);
+
+        const index = this.update_table.indexOf(other);
+        if (index !== -1) {
+            this.update_table.splice(index, 1);
+        }
     }
 
     add(other) {
@@ -97,6 +225,17 @@ export class World {
 
     addToUpdateTable(other) {
         this.update_table.push(other);
+    }
+
+    updateRenderPasses(passes) {
+        this.composer.dispose();
+        this.composer = new EffectComposer(this.renderer);
+        this.composer.addPass(this.renderPass);
+
+        for (const { pass, enabled } of passes) {
+            if (!enabled) continue;
+            this.composer.addPass(pass);
+        }
     }
 }
 

@@ -1,6 +1,9 @@
 import * as THREE from 'three';
 
 import { Perlin } from './noise.js';
+import { pickingState } from './picking.js';
+
+let lighthousePlaced = false;
 
 export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
     const perlin = new Perlin();
@@ -38,27 +41,128 @@ export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
 
             if (noiseValue === 0) continue;
 
-            const grassMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0x6a7a4a),
-                flatShading: true,
-            });
-            const sandMaterial = new THREE.MeshStandardMaterial({
-                color: new THREE.Color().setHex(0x9c8463),
-                flatShading: true,
-            });
-
-
             const height = (noiseValue * elevationScale) - 15;
-            const geometry = new THREE.CylinderGeometry(size, size, height, 6);
-            const hex = new THREE.Mesh(geometry, height < 2 ? sandMaterial : grassMaterial);
-            hex.castShadow = true;
-            hex.receiveShadow = true;
+            const cell = new Cell(height, size, finalX, finalZ);
 
-            hex.position.set(finalX, height/2, finalZ);
+            if (height > 3 && Math.random() < 0.4) {
+                cell.addStructure('tree', world);
+            }
+            if (height > 4 && Math.random() < 0.01) {
+                cell.addStructure('house', world);
+            }
+            if (height > 9 && Math.random() < 0.8 && !lighthousePlaced) {
+                cell.addStructure('lighthouse', world);
+                lighthousePlaced = true;
+            }
 
-            terrain.add(hex);
+            if (cell.structure) {
+                let rotateAmount = Math.floor(Math.random() * 6);
+                for (let i = 0; i < rotateAmount; i++) {
+                    cell.rotateStructure();
+                }
+            }
+
+            terrain.add(cell.mesh);
         }
     }
 
     world.add(terrain);
 };
+
+class Cell {
+    constructor(height, size, x, z) {
+        this.height = height;
+
+        const grassMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color().setHex(0x6a7a4a),
+            flatShading: true,
+        });
+        const sandMaterial = new THREE.MeshStandardMaterial({
+            color: new THREE.Color().setHex(0x9c8463),
+            flatShading: true,
+        });
+
+        const geometry = new THREE.CylinderGeometry(size, size, height, 6);
+        this.mesh = new THREE.Mesh(geometry, height < 2 ? sandMaterial : grassMaterial);
+        this.mesh.castShadow = true;
+        this.mesh.receiveShadow = true;
+
+        this.mesh.position.set(x, height / 2, z);
+
+        this.mesh.userData.parentCell = this;
+
+        this.structure = null;
+    }
+
+    removeStructure(world) {
+        if (this.structure) {
+            world.remove(this.structure);
+            this.structure = null;
+        }
+    }
+
+    addStructure(type, world) {
+        this.removeStructure(world);
+
+        const posX = this.mesh.position.x;
+        const posZ = this.mesh.position.z;
+        const posY = this.height;
+
+        let model;
+        switch (type) {
+            case 'tree':
+                const treeIndex = Math.floor(Math.random() * world.assets.trees.length);
+                const treeModel = world.assets.trees[treeIndex];
+                model = treeModel.clone();
+                break;
+            case 'house':
+                const houseIndex = Math.floor(Math.random() * world.assets.houses.length);
+                const houseModel = world.assets.houses[houseIndex];
+                model = houseModel.clone();
+                break;
+            case 'lighthouse':
+                const lighthouseModel = world.assets.lighthouse;
+                model = lighthouseModel.clone();
+                break;
+            case 'dock':
+                const dockModel = world.assets.dock;
+                model = dockModel.clone();
+                break;
+            default:
+        }
+
+        model.position.set(posX, posY, posZ);
+        model.traverse((node) => {
+            node.userData.parentCell = this;
+            if (node.isMesh) {
+                node.castShadow = true;
+                node.receiveShadow = true;
+            }
+        });
+
+        this.structure = model;
+        world.add(this.structure);
+    }
+
+    interactStructure(world) {
+        let interactType = pickingState.activeItem;
+
+        switch (interactType) {
+            case 'delete':
+                this.removeStructure(world);
+                break;
+            case 'tree':
+            case 'house':
+            case 'lighthouse':
+            case 'dock':
+                this.addStructure(interactType, world);
+                break;
+            default:
+        }
+    }
+
+    rotateStructure() {
+        if (!this.structure) return;
+        this.structure.rotateY(Math.PI / 3);
+    }
+}
