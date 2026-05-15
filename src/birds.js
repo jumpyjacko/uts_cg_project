@@ -1,13 +1,13 @@
 import * as THREE from 'three';
 
 const BIRD_CONFIG = {
-    maxBirds: 20,
+    maxBirds: 25,
     spawnRadius: 140,
     despawnRadius: 190,
     minHeight: 25,
-    maxHeight: 70,
-    minSpeed: 8,
-    maxSpeed: 18,
+    maxHeight: 50,
+    minSpeed: 10,
+    maxSpeed: 20,
     scale: 2,
     minSpawnDelay: 1,
     maxSpawnDelay: 3,
