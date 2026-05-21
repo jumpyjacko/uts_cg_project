@@ -1,9 +1,16 @@
-export function initGenerateButton(terrain) {
-    const generateBtn = document.getElementById('generate-btn');
+export function initTerrainPanel(terrain) {
+    const regenerateBtn = document.getElementById('regenerate-btn');
+    const islandSizeRange = document.getElementById('island-size-range');
 
-    if (generateBtn) {
-        generateBtn.addEventListener('click', () => {
+    if (regenerateBtn) {
+        regenerateBtn.addEventListener('click', () => {
+            terrain.newSeed();
             terrain.generate();
         });
+    }
+
+    islandSizeRange.oninput = function() {
+        terrain.setSize(this.value);
+        terrain.generate();
     }
 }
