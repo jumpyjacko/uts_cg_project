@@ -72,6 +72,7 @@ export class Terrain {
                 if (noiseValue === 0) continue;
 
                 const height = (noiseValue * this.elevationScale) - 15;
+                if (height < 0) { continue; }
                 const cell = new Cell(height, size, finalX, finalZ);
 
                 if (height > 3 && Math.random() < 0.4) {
