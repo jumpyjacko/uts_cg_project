@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import oceanvert from './shaders/ocean.vert?raw';
-import oceanfarg from './shaders/ocean.frag?raw';
+import oceanfrag from './shaders/ocean.frag?raw';
 import texture from './textures/water.png';
 
 export class Ocean {
@@ -11,7 +11,7 @@ export class Ocean {
                 uColor:{value:new THREE.Color('#4682b4')},
             },
             vertexShader: oceanvert,
-            fragmentShader: oceanfarg,
+            fragmentShader: oceanfrag,
             transparent:true
         });
         const loader = new THREE.TextureLoader();
