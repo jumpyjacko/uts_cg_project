@@ -6,9 +6,10 @@ import { Sky } from './sky.js';
 import { Ocean } from './ocean.js';
 import { Clouds } from './clouds.js';
 import { Birds } from './birds.js';
+import { loadAssets } from './assets.js';
 
 let world = new World(false); // true is enabling some debug renderers
-await world.loadAssets();
+await loadAssets();
 
 // setup lighting and sky
 let sky = new Sky();
