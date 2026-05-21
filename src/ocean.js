@@ -24,7 +24,7 @@ export class Ocean {
         const geo = new THREE.PlaneGeometry(500, 500, 500,500 );
         this.mesh = new THREE.Mesh(geo, this.mat);
         this.mesh.rotateX(-Math.PI / 2);
-        this.mesh.position.set(0, 0, 0);
+        this.mesh.position.set(0, -0.1, 0);
     }
     update() {
         this.mat.uniforms.uTime.value = performance.now() * 0.001;
