@@ -1,4 +1,4 @@
-export function initTerrainPanel(terrain) {
+export function initTerrainPanel(terrain, ocean) {
     const regenerateBtn = document.getElementById('regenerate-btn');
     const islandSizeRange = document.getElementById('island-size-range');
     const noiseScaleRange = document.getElementById('noise-scale-range');
@@ -13,6 +13,8 @@ export function initTerrainPanel(terrain) {
     islandSizeRange.oninput = function() {
         terrain.setSize(this.value);
         terrain.generate();
+
+        ocean.mat.uniforms.uIslandMaskRadius.value = this.value - 10;
     }
 
     noiseScaleRange.oninput = function() {

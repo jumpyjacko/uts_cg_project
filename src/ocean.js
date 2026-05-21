@@ -9,6 +9,7 @@ export class Ocean {
             uniforms:{uMap:{value: null},
                 uTime:{value: 0},
                 uColor:{value:new THREE.Color('#4682b4')},
+                uIslandMaskRadius:{value: 35.0},
             },
             vertexShader: oceanvert,
             fragmentShader: oceanfrag,
