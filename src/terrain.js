@@ -11,7 +11,7 @@ export class Terrain {
         this.noiseScale = 0.05;
         this.elevationScale = 40;
 
-        this.perlin = null;
+        this.perlin = new Perlin();
         this.group = new THREE.Group();
     }
 
@@ -37,11 +37,11 @@ export class Terrain {
             }
         }
 
-        this.newSeed();
-
         const size = 2;
+
+        const gridRatio = 1.125;
         const gridWidth = 40;
-        const gridHeight = 45;
+        const gridHeight = Math.round(gridWidth * gridRatio);
 
         const hexW = Math.sqrt(3) * size + 0.25;
         const hexH = (3 / 2) * size + 0.01;
