@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
 import { World } from './world.js';
-import { terrain } from './terrain.js';
+import { Terrain } from './terrain.js';
 import { Sky } from './sky.js';
 import { Ocean } from './ocean.js';
 import { Clouds } from './clouds.js';
@@ -22,7 +22,10 @@ world.add(clouds.group);
 world.addToUpdateTable(clouds);
 
 // Island terrain
-terrain(world);
+const terrain = new Terrain();
+terrain.generate();
+world.add(terrain.group);
+
 const ocean = new Ocean();
 world.add(ocean.mesh);
 world.addToUpdateTable(ocean);
