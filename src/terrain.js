@@ -106,6 +106,10 @@ export class Terrain {
     setSize(value) {
         this.gridWidth = value;
     }
+
+    setNoiseScale(value) {
+        this.noiseScale = value * 0.001;
+    }
 }
 
 class Cell {
