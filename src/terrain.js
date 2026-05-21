@@ -2,6 +2,7 @@ import * as THREE from 'three';
 
 import { Perlin } from './noise.js';
 import { pickingState } from './picking.js';
+import { assets } from './assets.js';
 
 let lighthousePlaced = false;
 
@@ -111,21 +112,21 @@ class Cell {
         let model;
         switch (type) {
             case 'tree':
-                const treeIndex = Math.floor(Math.random() * world.assets.trees.length);
-                const treeModel = world.assets.trees[treeIndex];
+                const treeIndex = Math.floor(Math.random() * assets.trees.length);
+                const treeModel = assets.trees[treeIndex];
                 model = treeModel.clone();
                 break;
             case 'house':
-                const houseIndex = Math.floor(Math.random() * world.assets.houses.length);
-                const houseModel = world.assets.houses[houseIndex];
+                const houseIndex = Math.floor(Math.random() * assets.houses.length);
+                const houseModel = assets.houses[houseIndex];
                 model = houseModel.clone();
                 break;
             case 'lighthouse':
-                const lighthouseModel = world.assets.lighthouse;
+                const lighthouseModel = assets.lighthouse;
                 model = lighthouseModel.clone();
                 break;
             case 'dock':
-                const dockModel = world.assets.dock;
+                const dockModel = assets.dock;
                 model = dockModel.clone();
                 break;
             default:

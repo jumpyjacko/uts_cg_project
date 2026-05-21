@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 
+import { assets } from './assets.js';
+
 const BIRD_CONFIG = {
     maxBirds: 25,
     spawnRadius: 140,
@@ -29,7 +31,7 @@ export class Birds {
     }
 
     spawnBird() {
-        const bird = this.world.assets.bird.clone();
+        const bird = assets.bird.clone();
         const side = Math.floor(Math.random() * 4);
         const radius = BIRD_CONFIG.spawnRadius;
 
