@@ -3,6 +3,7 @@ varying vec2 vUv;
 uniform sampler2D uMap;
 uniform float uTime;
 uniform vec3 uColor;
+uniform float uIslandMaskRadius;
 
 void main() {
     vec2 uv = vUv * 10.0 + vec2(uTime * -0.05);
@@ -13,7 +14,7 @@ void main() {
     vec4 tex1 = texture2D(uMap, uv);
     vec4 tex2 = texture2D(uMap, uv + vec2(0.2));
 
-    float islandMask = smoothstep(35.0, 55.0, length((vUv - 0.5) * 500.0));
+    float islandMask = smoothstep(uIslandMaskRadius, uIslandMaskRadius + 20.0, length((vUv - 0.5) * 500.0));
     vec3 oceanColor = uColor + vec3(tex1.a * 0.9 - tex2.a * 0.02);
     vec3 pondColor = uColor;
 

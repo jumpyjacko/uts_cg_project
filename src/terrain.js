@@ -6,69 +6,111 @@ import { assets } from './assets.js';
 
 let lighthousePlaced = false;
 
-export const terrain = (world, noiseScale = 0.05, elevationScale = 40) => {
-    const perlin = new Perlin();
-    const terrain = new THREE.Group();
+export class Terrain {
+    constructor() {
+        this.noiseScale = 0.05;
+        this.elevationScale = 40;
+        this.gridWidth = 40;
 
-    const size = 2;
-    const gridWidth = 40;
-    const gridHeight = 45;
+        this.perlin = new Perlin();
+        this.group = new THREE.Group();
+    }
 
-    const hexW = Math.sqrt(3) * size + 0.25;
-    const hexH = (3 / 2) * size + 0.01;
+    generate() {
+        if (this.group.children.length > 0) {
+            while (this.group.children.length > 0) {
+                const object = this.group.children[0];
 
-    const totalWidth = (gridWidth - 1) * hexW;
-    const totalHeight = (gridHeight - 1) * hexH;
+                if (object.isMesh) {
+                    if (object.geometry) object.geometry.dispose();
 
-    const offsetX = -totalWidth / 2;
-    const offsetZ = -totalHeight / 2;
-
-    for (let q = 0; q < gridWidth; q++) {
-        for (let r = 0; r < gridHeight; r++) {
-            let posX = q * hexW;
-            if (r % 2 === 1) posX += hexW / 2;
-            let posZ = r * hexH;
-
-            const finalX = posX + offsetX;
-            const finalZ = posZ + offsetZ;
-
-            let dist = Math.sqrt(finalX * finalX + finalZ * finalZ);
-            const maxDist = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2)) * 0.50;
-
-            if (dist > maxDist) { continue; }
-
-            let noiseValue = perlin.get(finalX * noiseScale, finalZ * noiseScale);
-            noiseValue = (noiseValue + 1) * 0.5;
-
-            if (noiseValue === 0) continue;
-
-            const height = (noiseValue * elevationScale) - 15;
-            const cell = new Cell(height, size, finalX, finalZ);
-
-            if (height > 3 && Math.random() < 0.4) {
-                cell.addStructure('tree', world);
-            }
-            if (height > 4 && Math.random() < 0.01) {
-                cell.addStructure('house', world);
-            }
-            if (height > 9 && Math.random() < 0.8 && !lighthousePlaced) {
-                cell.addStructure('lighthouse', world);
-                lighthousePlaced = true;
-            }
-
-            if (cell.structure) {
-                let rotateAmount = Math.floor(Math.random() * 6);
-                for (let i = 0; i < rotateAmount; i++) {
-                    cell.rotateStructure();
+                    if (object.material) {
+                        if (Array.isArray(object.material)) {
+                            object.material.forEach(mat => mat.dispose());
+                        } else {
+                            object.material.dispose();
+                        }
+                    }
                 }
-            }
 
-            terrain.add(cell.mesh);
+                this.group.remove(object);
+                lighthousePlaced = false;
+            }
+        }
+
+        const size = 2;
+
+        const gridRatio = 1.125;
+        const gridWidth = this.gridWidth;
+        const gridHeight = Math.round(gridWidth * gridRatio);
+
+        const hexW = Math.sqrt(3) * size + 0.25;
+        const hexH = (3 / 2) * size + 0.01;
+
+        const totalWidth = (gridWidth - 1) * hexW;
+        const totalHeight = (gridHeight - 1) * hexH;
+
+        const offsetX = -totalWidth / 2;
+        const offsetZ = -totalHeight / 2;
+
+        for (let q = 0; q < gridWidth; q++) {
+            for (let r = 0; r < gridHeight; r++) {
+                let posX = q * hexW;
+                if (r % 2 === 1) posX += hexW / 2;
+                let posZ = r * hexH;
+
+                const finalX = posX + offsetX;
+                const finalZ = posZ + offsetZ;
+
+                let dist = Math.sqrt(finalX * finalX + finalZ * finalZ);
+                const maxDist = Math.sqrt(Math.pow(totalWidth / 2, 2) + Math.pow(totalHeight / 2, 2)) * 0.50;
+
+                if (dist > maxDist) { continue; }
+
+                let noiseValue = this.perlin.get(finalX * this.noiseScale, finalZ * this.noiseScale);
+                noiseValue = (noiseValue + 1) * 0.5;
+
+                if (noiseValue === 0) continue;
+
+                const height = (noiseValue * this.elevationScale) - 15;
+                if (height < 0) { continue; }
+                const cell = new Cell(height, size, finalX, finalZ);
+
+                if (height > 3 && Math.random() < 0.4) {
+                    cell.addStructure('tree', this.group);
+                }
+                if (height > 4 && Math.random() < 0.01) {
+                    cell.addStructure('house', this.group);
+                }
+                if (height > 9 && Math.random() < 0.8 && !lighthousePlaced) {
+                    cell.addStructure('lighthouse', this.group);
+                    lighthousePlaced = true;
+                }
+
+                if (cell.structure) {
+                    let rotateAmount = Math.floor(Math.random() * 6);
+                    for (let i = 0; i < rotateAmount; i++) {
+                        cell.rotateStructure();
+                    }
+                }
+
+                this.group.add(cell.mesh);
+            }
         }
     }
 
-    world.add(terrain);
-};
+    newSeed() {
+        this.perlin = new Perlin();
+    }
+
+    setSize(value) {
+        this.gridWidth = value;
+    }
+
+    setNoiseScale(value) {
+        this.noiseScale = value * 0.001;
+    }
+}
 
 class Cell {
     constructor(height, size, x, z) {
