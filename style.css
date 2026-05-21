@@ -10,4 +10,8 @@ body {
                outline-blue-200
                hover:border-0 hover:shadow-sm
     }
+
+    .btn {
+        @apply font-bold py-2 px-4 rounded;
+    }
 }
