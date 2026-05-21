@@ -11,22 +11,33 @@ export class Terrain {
         this.noiseScale = 0.05;
         this.elevationScale = 40;
 
-        this.perlin = new Perlin();
-
+        this.perlin = null;
         this.group = new THREE.Group();
     }
 
     generate() {
-        if (this.group.count > 0) {
-            this.group.traverse((object) => {
-                if (object.isMesh) {
-                    object.geometry.dispose();
-                }
-            });
+        if (this.group.children.length > 0) {
+            while (this.group.children.length > 0) {
+                const object = this.group.children[0];
 
-            this.group = null;
-            this.group = new THREE.Group();
+                if (object.isMesh) {
+                    if (object.geometry) object.geometry.dispose();
+
+                    if (object.material) {
+                        if (Array.isArray(object.material)) {
+                            object.material.forEach(mat => mat.dispose());
+                        } else {
+                            object.material.dispose();
+                        }
+                    }
+                }
+
+                this.group.remove(object);
+                lighthousePlaced = false;
+            }
         }
+
+        this.newSeed();
 
         const size = 2;
         const gridWidth = 40;

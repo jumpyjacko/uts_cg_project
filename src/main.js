@@ -7,6 +7,7 @@ import { Ocean } from './ocean.js';
 import { Clouds } from './clouds.js';
 import { Birds } from './birds.js';
 import { loadAssets } from './assets.js';
+import { initGenerateButton } from './ui/terrainPanel.js';
 
 let world = new World(false); // true is enabling some debug renderers
 await loadAssets();
@@ -25,6 +26,7 @@ world.addToUpdateTable(clouds);
 const terrain = new Terrain();
 terrain.generate();
 world.add(terrain.group);
+initGenerateButton(terrain);
 
 const ocean = new Ocean();
 world.add(ocean.mesh);
