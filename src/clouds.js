@@ -14,7 +14,6 @@ export class Clouds {
 
         this.mat = new THREE.MeshStandardMaterial({
             color: 0xaaaaaa,
-            brightness: 1.0,
             roughness: 1.0,
             metalness: 0.0,
         });
