@@ -98,7 +98,7 @@ export class World {
             saoMinResolution: 0,
             saoBlur: false,
         };
-        this.passes.push({ id: "ao", pass: saoPass, enabled: true });
+        this.passes.push({ id: "ao", pass: saoPass, enabled: false });
 
         const bloomPass = new UnrealBloomPass(resolution, 0.067, 0.8, 0.95);
         this.passes.push({ id: "bloom", pass: bloomPass, enabled: true });
