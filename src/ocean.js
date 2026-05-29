@@ -26,6 +26,7 @@ export class Ocean {
         this.mesh = new THREE.Mesh(geo, this.mat);
         this.mesh.rotateX(-Math.PI / 2);
         this.mesh.position.set(0, -0.1, 0);
+        this.mesh.layers.set(1);
     }
     update() {
         this.mat.uniforms.uTime.value = performance.now() * 0.001;
