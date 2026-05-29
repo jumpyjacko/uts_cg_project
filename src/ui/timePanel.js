@@ -18,6 +18,7 @@ let paused = false;
 export function initTimePanel(world) {
     const pauseBtn = document.getElementById('pause-btn');
     const speedupBtn = document.getElementById('speed-up-btn');
+    const slowdownBtn = document.getElementById('slow-down-btn');
 
     if (pauseBtn) {
         pauseBtn.addEventListener('click', () => {
@@ -33,6 +34,12 @@ export function initTimePanel(world) {
         })
     }
 
+    if (slowdownBtn) {
+        slowdownBtn.addEventListener('click', () => {
+            timescale.timescale = Math.max(0, timescale.timescale - 1);
+            world.timer.setTimescale(timescale.timescale);
+        })
+    }
     if (speedupBtn) {
         speedupBtn.addEventListener('click', () => {
             timescale.timescale += 1;
