@@ -68,7 +68,7 @@ export class Sky {
         this.sun.getWorldPosition(sunWorldPosition);
         let dayFactor = sunWorldPosition.y / 100;
 
-        let speed = dayFactor > 0 ? 0.01 : 0.15;
+        let speed = dayFactor > 0 ? 0.01 : 0.05;
         this.sunAngle = (this.sunAngle || 0.5) + speed * delta;
         this.pivot.rotation.z = this.sunAngle;
         
