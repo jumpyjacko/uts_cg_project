@@ -42,6 +42,7 @@ export class Stars {
         });
 
         this.points = new THREE.Points(geometry, this.material);
+        this.points.layers.set(1); // exclude from outline pass
         this.group.add(this.points);
     }
 
