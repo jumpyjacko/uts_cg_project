@@ -3,6 +3,8 @@ import * as THREE from 'three';
 import skyVertShader from './shaders/skyDome.vert?raw';
 import skyFragShader from './shaders/skyDome.frag?raw';
 
+export let rawHeight = 0;
+
 export class Sky {
     constructor() {
         this.skyColour = 0x5098ae;
@@ -82,7 +84,7 @@ export class Sky {
         let finalSky = new THREE.Color();
         let finalFog = new THREE.Color();
 
-        const rawHeight = sunWorldPosition.y / 100;
+        rawHeight = sunWorldPosition.y / 100;
 
         const dayThreshold = 0.2;
         const sunsetThreshold = -0.1;

@@ -9,6 +9,7 @@ import { Birds } from './birds.js';
 import { loadAssets } from './assets.js';
 import { initTerrainPanel } from './ui/terrainPanel.js';
 import { initTimePanel } from './ui/timePanel.js';
+import { Stars } from './stars.js';
 
 let world = new World(false); // true is enabling some debug renderers
 await loadAssets();
@@ -17,6 +18,11 @@ await loadAssets();
 let sky = new Sky();
 world.add(sky.group);
 world.addToUpdateTable(sky);
+
+let stars = new Stars();
+world.add(stars.group);
+world.addToUpdateTable(stars);
+
 
 //cloud setup
 let clouds = new Clouds();
