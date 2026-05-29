@@ -91,10 +91,10 @@ export class Clouds {
     update(delta) {
         this.group.rotation.y += 0.008 * delta * 5;
 
-        // subtle individual bob per cloud
-        const t = performance.now() / 1000;
+        this.elapsedTime = (this.elapsedTime || 0) + delta;
+
         this.clouds.forEach(cloud => {
-            cloud.position.y += Math.sin(t * cloud.userData.driftSpeed + cloud.userData.driftOffset) * 0.05;
+            cloud.position.y += Math.sin(this.elapsedTime * cloud.userData.driftSpeed + cloud.userData.driftOffset) * delta;
         });
     }
 }
