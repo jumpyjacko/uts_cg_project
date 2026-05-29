@@ -20,6 +20,8 @@ export class World {
         this.scene.fog = new THREE.Fog(this.scene.background, 1, 3500);
 
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 4000);
+        this.camera.layers.enable(0);
+        this.camera.layers.enable(1);
 
         this.renderer = new THREE.WebGLRenderer({ antialias: false });
         this.renderer.setPixelRatio(window.devicePixelRatio);
@@ -140,11 +142,13 @@ export class World {
         }
 
         // prepass
+        this.camera.layers.disable(1); // exclude layer 1 geometry
         this.scene.overrideMaterial = new THREE.MeshNormalMaterial();
         this.renderer.setRenderTarget(this.normalTarget);
         this.renderer.render(this.scene, this.camera);
 
         // final
+        this.camera.layers.enable(1);
         this.scene.overrideMaterial = null;
         this.renderer.setRenderTarget(null);
         this.composer.render(this.scene, this.camera);
