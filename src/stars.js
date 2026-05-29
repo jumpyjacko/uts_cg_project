@@ -34,7 +34,7 @@ export class Stars {
 
         this.material = new THREE.PointsMaterial({
             color: 0xffffff,
-            size: THREE.MathUtils.randFloat(0.1, 1.0),
+            size: THREE.MathUtils.randFloat(0.5, 2.0),
             transparent: true,
             opacity: 0,                // invisible by default (daytime)
             depthWrite: false,
