@@ -108,5 +108,5 @@ export function setupRaycast(world) {
         }
     });
 
-    return { raycaster, mouse, marker };
+    return { raycaster, mouse };
 }
