@@ -35,11 +35,12 @@ export function setupRaycast(world) {
     const raycaster = new THREE.Raycaster();
     const mouse = new THREE.Vector2();
 
-    const markerGeometry = new THREE.SphereGeometry(0.5, 16, 16);
-    const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
-    const marker = new THREE.Mesh(markerGeometry, markerMaterial);
-    marker.visible = false;
-    world.add(marker);
+    // NOTE: debugging
+    // const markerGeometry = new THREE.SphereGeometry(0.5, 16, 16);
+    // const markerMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    // const marker = new THREE.Mesh(markerGeometry, markerMaterial);
+    // marker.visible = false;
+    // world.add(marker);
 
     window.addEventListener('mousemove', (event) => {
         mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
