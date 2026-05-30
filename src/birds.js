@@ -16,6 +16,12 @@ const BIRD_CONFIG = {
     maxLife: 25,
     bobStrength: 0.02,
     bobSpeed: 0.003,
+    flockRadius: 45,
+    separationRadius: 14,
+    separationStrength: 1.8,
+    alignmentStrength: 0.8,
+    groupStrength: 0.6,
+    turnStrength: 2.5,
 };
 
 export class Birds {
@@ -92,8 +98,52 @@ export class Birds {
         this.birds.push(bird);
     }
 
+    getBoidForce(bird) {
+        const separation = new THREE.Vector3();
+        const alignment = new THREE.Vector3();
+        const group = new THREE.Vector3();
+
+        let flockCount = 0;
+
+        for (const other of this.birds) {
+            if (other === bird) continue;
+            const distance = bird.position.distanceTo(other.position);
+            if (distance < BIRD_CONFIG.flockRadius) {
+                alignment.add(other.userData.velocity);
+                group.add(other.position);
+                flockCount++;
+            }
+
+            if (distance < BIRD_CONFIG.separationRadius) {
+                const away = new THREE.Vector3().subVectors(bird.position, other.position).normalize().divideScalar(Math.max(distance, 0.001));
+                separation.add(away);
+            }
+        }
+
+        const force = new THREE.Vector3();
+        if (flockCount > 0) {
+            alignment.divideScalar(flockCount).normalize();
+            alignment.sub(bird.userData.velocity);
+            group.divideScalar(flockCount);
+            group.sub(bird.position).normalize();
+            force.addScaledVector(separation, BIRD_CONFIG.separationStrength);
+            force.addScaledVector(alignment, BIRD_CONFIG.alignmentStrength);
+            force.addScaledVector(group, BIRD_CONFIG.groupStrength);
+        }
+
+        if(bird.position.y < BIRD_CONFIG.minHeight) {
+            force.y += 2;
+        }
+
+        if (bird.position.y > BIRD_CONFIG.maxHeight) {
+            force.y -= 2;
+        }
+
+        return force;
+    }
+
     update(delta) {
-        this.spawnTimer += delta
+        this.spawnTimer += delta;
 
         if (this.spawnTimer >= this.spawnDelay && this.birds.length < BIRD_CONFIG.maxBirds) {
             this.spawnBird();
@@ -106,9 +156,27 @@ export class Birds {
 
         for (let i = this.birds.length - 1; i >= 0; i--) {
             const bird = this.birds[i];
+
+            const force = this.getBoidForce(bird);
+            bird.userData.velocity.addScaledVector(
+                force,
+                BIRD_CONFIG.turnStrength * delta
+            );
+
+            bird.userData.velocity.y = THREE.MathUtils.clamp(
+                bird.userData.velocity.y,-0.25, 0.25
+            );
+
+            bird.userData.velocity.normalize();
             bird.position.addScaledVector(
                 bird.userData.velocity,
                 bird.userData.speed * delta
+            );
+
+            bird.lookAt(
+                bird.position.x + bird.userData.velocity.x,
+                bird.position.y + bird.userData.velocity.y,
+                bird.position.z + bird.userData.velocity.z
             );
 
             bird.position.y += Math.sin(Date.now() * BIRD_CONFIG.bobSpeed + bird.userData.bobOffset) * BIRD_CONFIG.bobStrength;
