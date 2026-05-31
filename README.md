@@ -1,6 +1,8 @@
-# placeholder title
+# Procedural Island Generator
 
-### how to run
+![image](./image.png)
+
+### How to run
 Download `node` and `npm`.
 
 Get dependencies
